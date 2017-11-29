@@ -1,6 +1,7 @@
 /* picoc parser - parses source and executes statements */
 #include "picoc.h"
 #include "interpreter.h"
+#include <stdio.h>
 
 static enum ParseResult ParseStatementMaybeRun(struct ParseState *Parser,
         int Condition, int CheckTrailingSemicolon);
@@ -22,6 +23,96 @@ static int gEnableDebugger = true;
 #else
 static int gEnableDebugger = false;
 #endif
+
+
+
+
+
+
+
+void StackFrameCopy(struct StackFrame *To, struct StackFrame *From)
+{
+    memcpy((void*)To, (void*)From, sizeof(*To));
+}
+
+void View(struct ParseState *Parser){
+	
+	
+	system("clear");
+
+	printf("++++++++Basic Informations+++++++\n\n");
+	printf("executed Line: %d",Parser->Line);
+	printf("\t\t in File: %s\n\n",Parser->FileName);
+	
+	
+
+
+	printf("++++++++Function Informations+++++++\n\n");
+	if(Parser->pc->TopStackFrame){
+		printf("Name of the Function we are in:\t\t\t%s\n",
+		Parser->pc->TopStackFrame->FuncName);
+		
+		printf("Number of Parameters of the Function we are in: %d\n",
+		Parser->pc->TopStackFrame->NumParams);
+		/*if(Parser->pc->TopStackFrame){
+		printf("with the return: %d\n",
+		Parser->pc->TopStackFrame->ReturnValue->Val->Typ->Base);
+		}*/
+		printf("++++++++Function Informations+++++++\n\n");
+	}
+	else printf("++++++++No running Function yet+++++++\n");
+	
+	printf("++++++++Memory Informations+++++++\n\n");	
+	printf("HeapBottom located at: \t\t%p\n", Parser->pc->HeapBottom);
+	printf("HeapStackTop located at: \t%p\n", Parser->pc->HeapStackTop);
+	printf("current StackFrame located at: \t%p\n", Parser->pc->StackFrame); //current EBP
+	//printf("current1 StackFrame located at: \t%p\n",(void *) Parser->pc->TopStackFrame); 
+	// Perhaps TopStackFrame is some kind of ESP
+	//printf("offset: \t\n%p",(void *) Parser->pc->TopStackFrame - Parser->pc->StackFrame);
+	struct StackFrame *Previous = NULL; 	
+	if(Parser->pc->TopStackFrame)
+	{
+	Previous = Parser->pc->TopStackFrame->PreviousStackFrame;
+		if(Previous){
+		printf("called by Function: %s\n", Previous->FuncName);		
+		printf("return adress(Old Base Pointer): %p\n",(void *)Previous -8);
+		
+		}
+	
+	}
+}
+
+/*
+void UpdateModel(struct Model *m, struct ParseState *Parser){
+	
+	
+	m->File = Parser->FileName;
+	m->scopeID = Parser->ScopeID;	
+	
+	m->Line = Parser->Line;
+	
+	m->File = Parser->FileName;
+	m->scopeID = Parser->ScopeID;	
+	
+	m->Line = Parser->Line;
+	
+	if(Parser->pc->TopStackFrame){
+	
+	m->FuncName = Parser->pc->TopStackFrame->FuncName;
+	m->NumParams = Parser->pc->TopStackFrame->NumParams;
+	m->ReturnValue = Parser->pc->TopStackFrame->ReturnValue;
+	
+	}
+	if(Parser->pc->HeapBottom)m->HeapBottom = Parser->pc->HeapBottom;
+	if(Parser->pc->HeapStackTop)m->HeapBottom = Parser->pc->HeapBottom;
+	if(Parser->pc->StackFrame)m->HeapBottom = Parser->pc->HeapBottom;
+	
+
+}
+
+*/
+
+
 
 
 /* deallocate any memory */
@@ -49,8 +140,13 @@ enum ParseResult ParseStatementMaybeRun(struct ParseState *Parser,
         Parser->Mode = RunModeSkip;
         Result = ParseStatement(Parser, CheckTrailingSemicolon);
         Parser->Mode = OldMode;
+	
         return (enum ParseResult)Result;
+	
+	
     } else
+	
+	 	
         return ParseStatement(Parser, CheckTrailingSemicolon);
 }
 
@@ -58,7 +154,7 @@ enum ParseResult ParseStatementMaybeRun(struct ParseState *Parser,
 int ParseCountParams(struct ParseState *Parser)
 {
     int ParamCount = 0;
-
+		
     enum LexToken Token = LexGetToken(Parser, NULL, true);
     if (Token != TokenCloseBracket && Token != TokenEOF) {
         /* count the number of parameters */
@@ -86,7 +182,7 @@ struct Value *ParseFunctionDefinition(struct ParseState *Parser,
     struct Value *OldFuncValue;
     struct ParseState FuncBody;
     Picoc *pc = Parser->pc;
-
+    
     if (pc->TopStackFrame != NULL)
         ProgramFail(Parser, "nested function definitions are not allowed");
 
@@ -556,6 +652,7 @@ enum RunMode ParseBlock(struct ParseState *Parser, int AbsorbOpenBrace,
     } else {
         /* just run it in its current mode */
         while (ParseStatement(Parser, true) == ParseResultOk) {
+	
         }
     }
 
@@ -595,7 +692,7 @@ enum ParseResult ParseStatement(struct ParseState *Parser,
     struct Value *LexerValue;
     struct Value *VarValue;
     struct ParseState PreState;
-
+    struct Model *m;
 #ifdef DEBUGGER
     /* if we're debugging, check for a breakpoint */
     if (Parser->DebugMode && Parser->Mode == RunModeRun)
@@ -856,8 +953,16 @@ enum ParseResult ParseStatement(struct ParseState *Parser,
         if (LexGetToken(Parser, NULL, true) != TokenSemicolon)
             ProgramFail(Parser, "';' expected");
     }
-
-    return ParseResultOk;
+    
+	
+	
+	
+	View(Parser);
+	
+	char c;
+	c = getchar();
+	
+	return ParseResultOk;
 }
 
 /* quick scan a source file for definitions */
@@ -891,9 +996,13 @@ void PicocParse(Picoc *pc, const char *FileName, const char *Source,
     /* do the parsing */
     LexInitParser(&Parser, pc, Source, Tokens, RegFileName, RunIt,
         EnableDebugger);
-
+	printf("Source Code parsed\n");   
     do {
+	
+	//printf("DO-While\n");	
+	
         Ok = ParseStatement(&Parser, true);
+	
     } while (Ok == ParseResultOk);
 
     if (Ok == ParseResultError)
