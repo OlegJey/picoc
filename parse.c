@@ -35,6 +35,10 @@ void StackFrameCopy(struct StackFrame *To, struct StackFrame *From)
     memcpy((void*)To, (void*)From, sizeof(*To));
 }
 
+
+
+
+
 void View(struct ParseState *Parser){
 	
 	
@@ -54,13 +58,41 @@ void View(struct ParseState *Parser){
 		
 		printf("Number of Parameters of the Function we are in: %d\n",
 		Parser->pc->TopStackFrame->NumParams);
-		/*if(Parser->pc->TopStackFrame){
-		printf("with the return: %d\n",
-		Parser->pc->TopStackFrame->ReturnValue->Val->Typ->Base);
-		}*/
+		
+		//First example how to deal with the return types and values. 
+		if(Parser->pc->TopStackFrame){
+		
+
+		/*Base is an enum and contains all the different return types we can think 			of (e.g. 0=void, 1=int,...)*/ 
+			switch(Parser->pc->TopStackFrame->ReturnValue->Typ->Base)
+			{
+		
+				case 0:
+				printf("with the return Type Void\n");
+				break;
+
+		//In Val we can find our actual Values. Such as our Integer in this case
+				case 1: 
+				printf("with the return Type Integer and Value: %d\n",
+				Parser->pc->TopStackFrame->ReturnValue->Val->Integer); 
+				break;
+		
+				case 3:
+				printf("with the return Type Short and Value: %d\n",
+				Parser->pc->TopStackFrame->ReturnValue->Val->ShortInteger); 
+				break;
+
+		//Placeholder, following types
+			}
+		
+				
+		}
+		
+
+
 		printf("++++++++Function Informations+++++++\n\n");
 	}
-	else printf("++++++++No running Function yet+++++++\n");
+	else printf("++++++++No running Function yet+++++++\n\n");
 	
 	printf("++++++++Memory Informations+++++++\n\n");	
 	printf("HeapBottom located at: \t\t%p\n", Parser->pc->HeapBottom);
