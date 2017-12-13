@@ -1,7 +1,9 @@
 #include <SFML/Audio.h>
 #include <SFML/Graphics.h>
 
-int hallo()
+#include "picoc.h"
+
+int view_gui(struct ParseState *Parser)
 {
     sfVideoMode mode = {800, 600, 32};
     sfRenderWindow* window;
@@ -29,7 +31,7 @@ int hallo()
     if (!font)
         return 1;
     text = sfText_create();
-    sfText_setString(text, "Hello SFML");
+    sfText_setString(text, Parser->FileName);
     sfText_setFont(text, font);
     sfText_setCharacterSize(text, 50);
 
@@ -73,5 +75,6 @@ int hallo()
     //sfTexture_destroy(texture);
     sfRenderWindow_destroy(window);
 
-    return 0;
+return 1;
+    
 }
