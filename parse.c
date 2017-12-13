@@ -82,14 +82,12 @@ void View(struct ParseState *Parser){
 				Parser->pc->TopStackFrame->ReturnValue->Val->ShortInteger); 
 				break;
 
-		//Placeholder, following types
+		//Placeholder for following types
+
+
 			}
 		
-				
 		}
-		
-
-
 		printf("++++++++Function Informations+++++++\n\n");
 	}
 	else printf("++++++++No running Function yet+++++++\n\n");
@@ -102,35 +100,34 @@ void View(struct ParseState *Parser){
 	// Perhaps TopStackFrame is some kind of ESP
 	//printf("offset: \t\n%p",(void *) Parser->pc->TopStackFrame - Parser->pc->StackFrame);
 	struct StackFrame *Previous = NULL; 	
-	if(Parser->pc->TopStackFrame)
-	{
-	Previous = Parser->pc->TopStackFrame->PreviousStackFrame;
-		if(Previous){
-		printf("called by Function: %s\n", Previous->FuncName);		
-		printf("return adress(Old Base Pointer): %p\n",(void *)Previous -8);
-		
-		}
+		if(Parser->pc->TopStackFrame)
+		{
+			Previous = Parser->pc->TopStackFrame->PreviousStackFrame;
+			if(Previous)
+			{
+			printf("called by Function: %s\n", Previous->FuncName);		
+			printf("return adress(Old Base Pointer): %p\n",(void *)Previous -8);	
+			}
 	
-	}
+		}
 }
 
-/*
+
 void UpdateModel(struct Model *m, struct ParseState *Parser){
 	
 	
-	m->File = Parser->FileName;
-	m->scopeID = Parser->ScopeID;	
+	//m->FileName = Parser->FileName;
+	//m->scopeID = Parser->ScopeID;	
 	
-	m->Line = Parser->Line;
+	//m->line = Parser->Line;
 	
-	m->File = Parser->FileName;
-	m->scopeID = Parser->ScopeID;	
 	
-	m->Line = Parser->Line;
-	
+/*	
 	if(Parser->pc->TopStackFrame){
 	
 	m->FuncName = Parser->pc->TopStackFrame->FuncName;
+
+
 	m->NumParams = Parser->pc->TopStackFrame->NumParams;
 	m->ReturnValue = Parser->pc->TopStackFrame->ReturnValue;
 	
@@ -139,10 +136,11 @@ void UpdateModel(struct Model *m, struct ParseState *Parser){
 	if(Parser->pc->HeapStackTop)m->HeapBottom = Parser->pc->HeapBottom;
 	if(Parser->pc->StackFrame)m->HeapBottom = Parser->pc->HeapBottom;
 	
+*/
 
 }
 
-*/
+
 
 
 
@@ -987,9 +985,11 @@ enum ParseResult ParseStatement(struct ParseState *Parser,
     }
     
 	
-	
-	
+	// CSFML function call at this point works
+	view_gui(Parser);
 	View(Parser);
+	
+	//UpdateModel(m, Parser);
 	
 	char c;
 	c = getchar();

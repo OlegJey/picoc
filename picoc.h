@@ -24,6 +24,12 @@ extern void PicocParse(Picoc *pc, const char *FileName, const char *Source,
 	int SourceLen, int RunIt, int CleanupNow, int CleanupSource, int EnableDebugger);
 extern void PicocParseInteractive(Picoc *pc);
 
+
+/*testCsfml.cpp*/
+
+extern int view_gui(struct ParseState *Parser);
+
+
 /* platform.c */
 extern void PicocCallMain(Picoc *pc, int argc, char **argv);
 extern void PicocInitialize(Picoc *pc, int StackSize);
