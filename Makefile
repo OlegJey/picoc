@@ -1,14 +1,23 @@
 CC=gcc
 
 
+
 # Use $ xxd -i ./LICENSE > LICENSE.h
 # to create the license info file. Should be signed char, add a
 # null character to the end of the array.
 
 # -O3 -g
 # -std=gnu11
-CFLAGS=-Wall -g -std=gnu11 -pedantic -DUNIX_HOST -DVER=\"`git show-ref --abbrev=8 --head --hash head`\" -DTAG=\"`git describe --abbrev=0 --tags`\"
-LIBS=-lm -lreadline
+CFLAGS= -Wall -g -std=gnu11 -pedantic -DUNIX_HOST -DVER=\"`git show-ref --abbrev=8 --head --hash head`\" -DTAG=\"`git describe --abbrev=0 --tags`\"
+LIBS=-lm -lreadline -lcsfml-graphics -lcsfml-window -lcsfml-system -lcsfml-audio
+
+
+LIBSSFML=-lsfml-graphics -lsfml-window -lsfml-system -lcsfml-graphics -lcsfml-window -lcsfml-system -lcsfml-audio
+
+
+SRCS_CPP = sfmltest.cpp
+
+OBJS_CPP = sfmltest.o
 
 TARGET	= picoc
 SRCS	= picoc.c table.c lex.c parse.c expression.c heap.c type.c \
@@ -16,12 +25,13 @@ SRCS	= picoc.c table.c lex.c parse.c expression.c heap.c type.c \
 	platform/platform_unix.c platform/library_unix.c \
 	cstdlib/stdio.c cstdlib/math.c cstdlib/string.c cstdlib/stdlib.c \
 	cstdlib/time.c cstdlib/errno.c cstdlib/ctype.c cstdlib/stdbool.c \
-	cstdlib/unistd.c
+	cstdlib/unistd.c \
+	testCsfml.c
 OBJS	:= $(SRCS:%.c=%.o)
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS)
+$(TARGET): $(OBJS)  
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
 
 test:	all
@@ -32,6 +42,7 @@ test:	all
 clean:
 	rm -f $(TARGET) $(OBJS) *~
 
+	
 count:
 	@echo "Core:"
 	@cat picoc.h interpreter.h picoc.c table.c lex.c parse.c expression.c platform.c heap.c type.c variable.c include.c debug.c | grep -v '^[ 	]*/\*' | grep -v '^[ 	]*$$' | wc
@@ -40,6 +51,8 @@ count:
 	@cat $(SRCS) *.h */*.h | wc
 
 .PHONY: clibrary.c
+
+
 
 picoc.o: picoc.c picoc.h
 table.o: table.c interpreter.h platform.h
@@ -64,3 +77,4 @@ cstdlib/errno.o: cstdlib/errno.c interpreter.h platform.h
 cstdlib/ctype.o: cstdlib/ctype.c interpreter.h platform.h
 cstdlib/stdbool.o: cstdlib/stdbool.c interpreter.h platform.h
 cstdlib/unistd.o: cstdlib/unistd.c interpreter.h platform.h
+
