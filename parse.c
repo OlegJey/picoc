@@ -3,6 +3,8 @@
 #include "interpreter.h"
 #include <stdio.h>
 
+
+
 static enum ParseResult ParseStatementMaybeRun(struct ParseState *Parser,
         int Condition, int CheckTrailingSemicolon);
 static int ParseCountParams(struct ParseState *Parser);
@@ -41,7 +43,7 @@ void StackFrameCopy(struct StackFrame *To, struct StackFrame *From)
 
 void View(struct ParseState *Parser){
 	
-	
+	//char* mode;
 	system("clear");
 
 	printf("++++++++Basic Informations+++++++\n\n");
@@ -986,13 +988,17 @@ enum ParseResult ParseStatement(struct ParseState *Parser,
     
 	
 	// CSFML function call at this point works
+
+if(Parser->Mode != 1){ //lets skip the RunningMode "Skip", nothing happens here anyway
+
 	view_gui(Parser);
 	View(Parser);
-	
-	//UpdateModel(m, Parser);
-	
 	char c;
 	c = getchar();
+}	
+	//UpdateModel(m, Parser);
+	
+	
 	
 	return ParseResultOk;
 }

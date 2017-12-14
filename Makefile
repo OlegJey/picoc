@@ -26,7 +26,8 @@ SRCS	= picoc.c table.c lex.c parse.c expression.c heap.c type.c \
 	cstdlib/stdio.c cstdlib/math.c cstdlib/string.c cstdlib/stdlib.c \
 	cstdlib/time.c cstdlib/errno.c cstdlib/ctype.c cstdlib/stdbool.c \
 	cstdlib/unistd.c \
-	testCsfml.c
+	testCsfml.c\
+	tools.c
 OBJS	:= $(SRCS:%.c=%.o)
 
 all: $(TARGET)
@@ -53,7 +54,7 @@ count:
 .PHONY: clibrary.c
 
 
-
+tools.o: tools.c tools.h
 picoc.o: picoc.c picoc.h
 table.o: table.c interpreter.h platform.h
 lex.o: lex.c interpreter.h platform.h
