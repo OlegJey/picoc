@@ -6,17 +6,33 @@
 
 //#include "picoc.h"
 
-int main()//struct ParseState *Parser)
+int view_gui()//struct ParseState *Parser)
 {
     sfVideoMode mode = {1200, 600, 32};
     sfRenderWindow* window;
     sfFont* font;
     sfText* nextStep;
-    sfVector2f nextStepPos = {500, 21};
-    sfText* code;
     sfVector2f codePos = {50, 80};
     sfText* lineNumbers;
     sfVector2f lineNumbersPos = {20, 80};
+    sfText* fileName;
+    sfVector2f nextStepPos = {500, 21};
+    sfText* code;
+    sfVector2f fileNamePos = {802, 56};
+    sfText* runningMode;
+    sfVector2f runningModePos = {802, 81};
+    sfText* executedLine;
+    sfVector2f executedLinePos = {802, 106};
+    sfText* functionName;
+    sfVector2f functionNamePos = {802, 131};
+    sfText* parameterCount;
+    sfVector2f parameterCountPos = {802, 156};
+    sfText* returnType;
+    sfVector2f returnTypePos = {802, 181};
+    sfText* returnValue;
+    sfVector2f returnValuePos = {802, 206};
+    sfText* returnAddress;
+    sfVector2f returnAddressPos = {802, 231};
     sfEvent event;
     
     sfRectangleShape* infoBlock;
@@ -63,6 +79,7 @@ int main()//struct ParseState *Parser)
     font = sfFont_createFromFile("arial.ttf");
     if (!font)
         return 1;
+
     nextStep = sfText_create();
     sfText_setString(nextStep, "Mit Leertaste weiter");//Parser->FileName);
     sfText_setFont(nextStep, font);
@@ -70,8 +87,7 @@ int main()//struct ParseState *Parser)
     sfText_setColor(nextStep, sfBlack);
     sfText_setPosition(nextStep, nextStepPos);
 
-    
-    
+    /*File öffnen und Sourcecode in chararray speichern für Ausgabe*/
     FILE* file = fopen("test.c", "r");
     char line[256];
     char sourceCode[10000];
@@ -81,7 +97,7 @@ int main()//struct ParseState *Parser)
         lineCount++;
         //printf("%s", line);
     }
-    
+
     code = sfText_create();
     sfText_setString(code, sourceCode);
     sfText_setFont(code, font);
@@ -89,13 +105,14 @@ int main()//struct ParseState *Parser)
     sfText_setColor(code, sfBlack);
     sfText_setPosition(code, codePos);
     
+
+    /*chararray mit Liniennummerierung für angezeigten SourceCode*/
     char lineNumbersStr[lineCount*2+1];
-    char buffer[20];
-  
+    char buffer[20];  
     for(int i=1; i<=lineCount; i++){
         sprintf(buffer, "%d", i); //int to char
         lineNumbersStr[i-1] = buffer[0];
-        strcat(lineNumbersStr, "\n");
+        strcat(lineNumbersStr, "\n");	//newline Hinzufügen funktioniert noch nicht
         
     }
    
@@ -106,7 +123,63 @@ int main()//struct ParseState *Parser)
     sfText_setCharacterSize(lineNumbers, 13);
     sfText_setColor(lineNumbers, sfBlack);
     sfText_setPosition(lineNumbers, lineNumbersPos);
+
+    fileName = sfText_create();
+    sfText_setString(fileName, "Dateiname: ");
+    sfText_setFont(fileName, font);
+    sfText_setCharacterSize(fileName, 13);
+    sfText_setColor(fileName, sfBlack);
+    sfText_setPosition(fileName, fileNamePos);
     
+	runningMode = sfText_create();
+    sfText_setString(runningMode, "PicoC Running mode: ");
+    sfText_setFont(runningMode, font);
+    sfText_setCharacterSize(runningMode, 13);
+    sfText_setColor(runningMode, sfBlack);
+    sfText_setPosition(runningMode, runningModePos);
+    
+    executedLine = sfText_create();
+    sfText_setString(executedLine, "Executed line: ");
+    sfText_setFont(executedLine, font);
+    sfText_setCharacterSize(executedLine, 13);
+    sfText_setColor(executedLine, sfBlack);
+    sfText_setPosition(executedLine, executedLinePos);
+
+    functionName = sfText_create();
+    sfText_setString(functionName, "Funktionsname: ");
+    sfText_setFont(functionName, font);
+    sfText_setCharacterSize(functionName, 13);
+    sfText_setColor(functionName, sfBlack);
+    sfText_setPosition(functionName, functionNamePos);
+
+    parameterCount = sfText_create();
+    sfText_setString(parameterCount, "Anzahl Parameter: ");
+    sfText_setFont(parameterCount, font);
+    sfText_setCharacterSize(parameterCount, 13);
+    sfText_setColor(parameterCount, sfBlack);
+    sfText_setPosition(parameterCount, parameterCountPos);
+
+    returnType = sfText_create();
+    sfText_setString(returnType, "Rueckgabetyp: ");
+    sfText_setFont(returnType, font);
+    sfText_setCharacterSize(returnType, 13);
+    sfText_setColor(returnType, sfBlack);
+    sfText_setPosition(returnType, returnTypePos);
+
+    returnValue = sfText_create();
+    sfText_setString(returnValue, "Rueckgabewert: ");
+    sfText_setFont(returnValue, font);
+    sfText_setCharacterSize(returnValue, 13);
+    sfText_setColor(returnValue, sfBlack);
+    sfText_setPosition(returnValue, returnValuePos);
+
+    returnAddress = sfText_create();
+    sfText_setString(returnAddress, "Ruecksprungadresse: ");
+    sfText_setFont(returnAddress, font);
+    sfText_setCharacterSize(returnAddress, 13);
+    sfText_setColor(returnAddress, sfBlack);
+    sfText_setPosition(returnAddress, returnAddressPos);
+
     /* Start the game loop */
     while (sfRenderWindow_isOpen(window))
     {
@@ -116,7 +189,9 @@ int main()//struct ParseState *Parser)
             /* Close window : exit */
             if (event.type == sfEvtClosed)
                 sfRenderWindow_close(window);
-        }
+            //else if(event.type == event.sfKeyboard_isKeyPressed(sfKeyboard_Space)) //SYNTAX??
+       			//execute next line with PicoC
+        }	
 
         /* Clear the screen */
         sfRenderWindow_clear(window, sfWhite);
@@ -132,17 +207,33 @@ int main()//struct ParseState *Parser)
         /* Draw the text */
         sfRenderWindow_drawText(window, nextStep, NULL);
         sfRenderWindow_drawText(window, code, NULL);
-        sfRenderWindow_drawText(window, lineNumbers, NULL);
+        sfRenderWindow_drawText(window, fileName, NULL);
+        sfRenderWindow_drawText(window, runningMode, NULL);
+        sfRenderWindow_drawText(window, executedLine, NULL);
+        sfRenderWindow_drawText(window, functionName, NULL);
+        sfRenderWindow_drawText(window, parameterCount, NULL);
+        sfRenderWindow_drawText(window, returnType, NULL);
+        sfRenderWindow_drawText(window, returnValue, NULL);
+        sfRenderWindow_drawText(window, returnAddress, NULL);
+        
+
 
         /* Update the window */
         sfRenderWindow_display(window);
     }
 
     /* Cleanup resources */
-    sfText_destroy(nextStep);
-    sfText_destroy(code);
     sfFont_destroy(font);
-    sfText_destroy(lineNumbers);
+    sfText_destroy(nextStep);
+    sfText_destroy(code);   
+    sfText_destroy(fileName);
+    sfText_destroy(runningMode);
+    sfText_destroy(executedLine);
+    sfText_destroy(functionName);
+    sfText_destroy(parameterCount);
+    sfText_destroy(returnType);
+    sfText_destroy(returnValue);
+    sfText_destroy(returnAddress);
     sfRectangleShape_destroy(infoBlock);
     sfRectangleShape_destroy(stackframe1);
     sfRectangleShape_destroy(stackframe2);
