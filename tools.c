@@ -64,7 +64,7 @@ char* getRetDetails(char* to, struct ParseState *Parser){
 		strcpy(to,"ReturnType: Int, Value: ");  
 		sprintf(val,"%d",Parser->pc->TopStackFrame->ReturnValue->Val->Integer);
 		strcat(to,val);
-		printf("Moin  \n");
+		
 		break;
 
 		case 2: 
@@ -127,12 +127,8 @@ char* getRetDetails(char* to, struct ParseState *Parser){
 		default: to = "Not supported ReturnType";
 
 		}
-
-
 	
 	}
-
-
 
 	else to = "no ReturnType at this moment";
 
@@ -143,12 +139,157 @@ char* getRetDetails(char* to, struct ParseState *Parser){
 
 }
 
+int getLine(struct ParseState *Parser){
+
+	int ret = 0;
+
+	if(Parser)ret = Parser->Line; 
+			
+	return ret; 
+}
+
+char* getLineAsString(char* to, struct ParseState *Parser){
+
+	if(Parser)sprintf(to, "%d", Parser->Line);
+		else to = "no Line at this Moment";
+
+	return to;
+
+}
+
+int getNumParam(struct ParseState *Parser){
+	
+	int ret = 0;	
+
+	if(Parser) ret =  Parser->pc->TopStackFrame->NumParams;
+
+	return ret;
+
+}
+
+
+char* getNumParamAsString(char* to, struct ParseState *Parser){
+
+	if(Parser->pc->TopStackFrame)sprintf(to,"%d", Parser->pc->TopStackFrame->NumParams);
+	else to = "cant get NumParam";
+	return to; 
+}
 
 
 
 
 
+int getScopeID(struct ParseState *Parser){
 
+	int ret = 0;	
+
+	if(Parser) ret = Parser->ScopeID;
+
+	return ret;
+}
+
+char* getScopeIDAsString(char* to, struct ParseState *Parser){
+
+	if(Parser)sprintf(to,"%d",Parser->ScopeID);
+	
+	else to = "cant get scopeID";
+	
+	return to;
+}
+
+
+int countStackFrames(struct ParseState *Parser){
+
+	int count = 1;
+	
+	struct StackFrame *current;
+	
+	if(Parser->pc->TopStackFrame){
+			 
+		current = Parser->pc->TopStackFrame;
+	
+		while(current->PreviousStackFrame){
+		
+		current = current->PreviousStackFrame;
+		count++;		
+
+		}
+
+	}	
+	
+	return count;
+}
+
+void* get_HeapBottom(struct ParseState *Parser){
+
+	if(Parser->pc)
+		return Parser->pc->HeapBottom;
+  	  else return NULL;
+
+} 
+
+void* get_HeapStackTop(struct ParseState *Parser){
+
+	if(Parser->pc)
+		return Parser->pc->HeapStackTop;	
+	  else return NULL;
+
+}
+
+void* get_StackFrame(struct ParseState *Parser){
+
+	if(Parser->pc)
+		return Parser->pc->StackFrame;
+	  else return NULL;
+
+}
+
+struct StackFrame* get_TopStackFrame(struct ParseState *Parser){
+	
+	struct StackFrame *ret;
+
+	if(Parser->pc->TopStackFrame) ret = Parser->pc->TopStackFrame; 
+	
+	return ret;
+
+}
+
+struct StackFrame* get_PreviousStackFrame(struct ParseState *Parser){
+	
+	struct StackFrame *ret;
+
+	if(Parser->pc->TopStackFrame->PreviousStackFrame) 
+	ret = Parser->pc->TopStackFrame->PreviousStackFrame; 
+	
+	return ret;
+
+}
+
+
+char* getGlobalVarAndVal(char* to, struct ParseState *Parser){
+
+
+
+return to;
+}
+
+
+char* getLocalVarAndVal(char* to, struct ParseState *Parser){
+/*
+	short int declLine = 0;
+
+	if(Parser->pc->TopStackFrame){
+	
+	declLine = Parser->pc->TopStackFrame->LocalTable->TableEntry->DeclLine;
+
+	}
+
+
+	sprintf(to,"%d", decLine);
+
+*/
+return to;
+}
 
 
 
