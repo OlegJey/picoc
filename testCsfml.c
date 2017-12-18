@@ -189,10 +189,22 @@ int view_gui()//struct ParseState *Parser)
             /* Close window : exit */
             if (event.type == sfEvtClosed)
                 sfRenderWindow_close(window);
-            //else if(event.type == event.sfKeyboard_isKeyPressed(sfKeyboard_Space)) //SYNTAX??
-       			//execute next line with PicoC
+			else if(event.type == sfEvtKeyPressed) {				
+				printf("Key pressed! \n");
+				if(event.key.code == sfKeySpace) {							
+					printf("Space pressed! \n");
+					sfRenderWindow_close(window);
+				}
+				else if(event.key.code == sfKeyUp){
+					printf("Up Arrow pressed! \n");
+				}
+				else if(event.key.code == sfKeyDown){
+					printf("Down Arrow pressed! \n");
+				}
+				
+			}
         }	
-
+	
         /* Clear the screen */
         sfRenderWindow_clear(window, sfWhite);
 

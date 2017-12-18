@@ -994,7 +994,7 @@ if(Parser->Mode != 1){ //lets skip the RunningMode "Skip", nothing happens here 
 	view_gui(Parser);
 	View(Parser);
 	char c;
-	c = getchar();
+	//c = getchar();
 }	
 	//UpdateModel(m, Parser);
 	
