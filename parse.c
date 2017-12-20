@@ -1,5 +1,6 @@
 /* picoc parser - parses source and executes statements */
 #include "picoc.h"
+#include "tools.h"
 #include "interpreter.h"
 #include <stdio.h>
 
@@ -29,9 +30,6 @@ static int gEnableDebugger = false;
 
 
 
-
-
-
 void StackFrameCopy(struct StackFrame *To, struct StackFrame *From)
 {
     memcpy((void*)To, (void*)From, sizeof(*To));
@@ -51,7 +49,7 @@ void View(struct ParseState *Parser){
 	printf("\t\t in File: %s\n\n",Parser->FileName);
 	
 	
-
+	
 
 	printf("++++++++Function Informations+++++++\n\n");
 	if(Parser->pc->TopStackFrame){
@@ -989,16 +987,20 @@ enum ParseResult ParseStatement(struct ParseState *Parser,
 	
 	// CSFML function call at this point works
 
-if(Parser->Mode != 1){ //lets skip the RunningMode "Skip", nothing happens here anyway
+if(Parser->Mode != 1 && (strcmp(Parser->FileName, "startup") != 0) && (strcmp(Parser->FileName, "stdio.h") != 0)){ //lets skip the RunningMode "Skip", nothing happens here anyway
 
 	view_gui(Parser);
 	View(Parser);
+	char* text = malloc(sizeof(char) * 1024);
+	//getLocalVarAndVal(text, Parser);	
+	printf("\n%s", text);
+	free(text);
+	
 	char c;
 	//c = getchar();
+
 }	
 	//UpdateModel(m, Parser);
-	
-	
 	
 	return ParseResultOk;
 }
