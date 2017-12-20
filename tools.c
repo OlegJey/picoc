@@ -280,16 +280,56 @@ char* getLocalVarAndVal(char* to, struct ParseState *Parser){
 
 	if(Parser->pc->TopStackFrame){
 	
-	declLine = Parser->pc->TopStackFrame->LocalTable->TableEntry->DeclLine;
+	struct Table Tbl = Parser->pc->TopStackFrame->LocalTable;
+	
+	//int HashValue = ((unsigned long)Key) % Tbl->Size;
+    
+	struct TableEntry *Entry;	
+	Entry = Tbl->
+
+	// for (Entry = Tbl->HashTable[HashValue]; Entry != NULL; Entry = Entry->Next) {
+        
+            
+    //}	
+
 
 	}
 
+	
 
-	sprintf(to,"%d", decLine);
 
+
+	sprintf(to,"%d", declLine);
 */
+
 return to;
 }
+
+
+void printStrTbl(Picoc *pc)
+{
+    int Count;
+    struct TableEntry *Entry;
+    struct TableEntry *NextEntry;
+
+    for (Count = 0; Count < pc->StringTable.Size; Count++) {
+        for (Entry = pc->StringTable.HashTable[Count];
+                Entry != NULL; Entry = NextEntry) {
+            NextEntry = Entry->Next;
+           //	printf("%s, %d\n", Entry->p.v.Key, Count);
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

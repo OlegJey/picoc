@@ -43,7 +43,9 @@ extern int getScopeID(struct ParseState *Parser); //done
 
 extern int countStackFrames(struct ParseState *Parser); //done
 
+//void type
 
+extern void printStrTbl(Picoc  *pc);
 
 
 
