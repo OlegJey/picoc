@@ -8,7 +8,7 @@ int view_gui(struct ParseState *Parser)
 {
     sfVideoMode mode = {1200, 600, 32};
     sfRenderWindow* window;
-    sfFont* font;
+    sfFont* font; 
     sfText* code;
     sfVector2f codePos = {50, 80};
     sfText* lineNumbers;
@@ -57,6 +57,8 @@ int view_gui(struct ParseState *Parser)
     sfRectangleShape_setSize(infoBlock, infoBlockSize);
     sfRectangleShape_setFillColor(infoBlock, sfCyan);
     sfRectangleShape_setPosition(infoBlock, infoBlockPos);
+    sfRectangleShape_setOutlineColor(infoBlock, sfBlack);
+    sfRectangleShape_setOutlineThickness(infoBlock, 5.0);
     
     stackframe1 = sfRectangleShape_create();
     sfRectangleShape_setSize(stackframe1, stackframe1Size);
@@ -86,43 +88,47 @@ int view_gui(struct ParseState *Parser)
     sfText_setPosition(nextStep, nextStepPos);
 
     /*File öffnen und Sourcecode in chararray speichern für Ausgabe*/
-    //char* fname = malloc(sizeof(char) * 1024);
-    //strcpy(fname, getFileName(fname, Parser));
-    FILE* file = fopen("test.c", "r");
-    char line[256];
-    char* sourceCode= malloc(10024);
-    int lineCount = 0;
-    while(fgets(line, sizeof(line), file)){
-        strcat(sourceCode, line);
-        lineCount++;
-        //printf("%s", line);
-    }
-
-    code = sfText_create();
-    sfText_setString(code, sourceCode);
-    sfText_setFont(code, font);
-    sfText_setCharacterSize(code, 13);
-    sfText_setColor(code, sfBlack);
-    sfText_setPosition(code, codePos);
-    
-
-    /*chararray mit Liniennummerierung für angezeigten SourceCode*/
-    char* lineNumbersStr = malloc(1024);
-    char buffer[12];  
-    for(int i=1; i<=lineCount; i++){
-        sprintf(buffer, "%d", i); //int to char
-        strcat(lineNumbersStr, buffer);
-        strcat(lineNumbersStr, "\n");	//newline Hinzufügen funktioniert noch nicht
+    //if(getLine(Parser)>5){
+        char* fname = malloc(sizeof(char) * 1024);
+        strcpy(fname, getFileName(fname, Parser));
+        fname = getFileName(fname, Parser);
         
-    }
-   
+        FILE* file = fopen(fname, "r");
+        char line[256];
+        char* sourceCode= calloc(10024, sizeof(char));
+        int lineCount = 0;
+        while(fgets(line, sizeof(line), file)){
+            strcat(sourceCode, line);
+            lineCount++;
+            //printf("%s", line);
+        }strcat(sourceCode, "\0");
     
-    lineNumbers = sfText_create();
-    sfText_setString(lineNumbers, lineNumbersStr);
-    sfText_setFont(lineNumbers, font);
-    sfText_setCharacterSize(lineNumbers, 13);
-    sfText_setColor(lineNumbers, sfBlack);
-    sfText_setPosition(lineNumbers, lineNumbersPos);
+
+        code = sfText_create();
+        sfText_setString(code, sourceCode);
+        sfText_setFont(code, font);
+        sfText_setCharacterSize(code, 13);
+        sfText_setColor(code, sfBlack);
+        sfText_setPosition(code, codePos);
+    
+
+        /*chararray mit Liniennummerierung für angezeigten SourceCode*/
+        char* lineNumbersStr = calloc(1024, sizeof(char));
+        char buffer[12];  
+        for(int i=1; i<=lineCount; i++){
+            sprintf(buffer, "%d", i); //int to char
+            strcat(lineNumbersStr, buffer);
+            strcat(lineNumbersStr, "\n");	//newline Hinzufügen funktioniert noch nicht        
+        }
+        strcat(lineNumbersStr, "\0");
+        
+        lineNumbers = sfText_create();
+        sfText_setString(lineNumbers, lineNumbersStr);
+        sfText_setFont(lineNumbers, font);
+        sfText_setCharacterSize(lineNumbers, 13);
+        sfText_setColor(lineNumbers, sfBlack);
+        sfText_setPosition(lineNumbers, lineNumbersPos);
+    //}
 
     fileName = sfText_create();
     char* fileNameChar = malloc(1024);
@@ -240,7 +246,7 @@ int view_gui(struct ParseState *Parser)
         }	
 	
         /* Clear the screen */
-        sfRenderWindow_clear(window, sfWhite);
+        sfRenderWindow_clear(window, sfWhite);//sfColor_fromRGBA(49, 60, 72, 1.0));
 
         /* Draw the sprite */
         //sfRenderWindow_drawSprite(window, sprite, NULL);
