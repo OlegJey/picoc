@@ -282,11 +282,10 @@ char* getLocalVarAndVal(char* to, struct ParseState *Parser){
 	
 	struct Table Tbl = Parser->pc->TopStackFrame->LocalTable;
 	
-	//int HashValue = ((unsigned long)Key) % Tbl->Size;
+	int HashValue = ((unsigned long)Key) % Tbl->Size;
     
 	struct TableEntry *Entry;	
-	Entry = Tbl->
-
+	
 	// for (Entry = Tbl->HashTable[HashValue]; Entry != NULL; Entry = Entry->Next) {
         
             
@@ -296,9 +295,6 @@ char* getLocalVarAndVal(char* to, struct ParseState *Parser){
 	}
 
 	
-
-
-
 	sprintf(to,"%d", declLine);
 */
 
