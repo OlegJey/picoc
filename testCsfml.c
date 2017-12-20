@@ -86,9 +86,11 @@ int view_gui(struct ParseState *Parser)
     sfText_setPosition(nextStep, nextStepPos);
 
     /*File öffnen und Sourcecode in chararray speichern für Ausgabe*/
+    //char* fname = malloc(sizeof(char) * 1024);
+    //strcpy(fname, getFileName(fname, Parser));
     FILE* file = fopen("test.c", "r");
     char line[256];
-    char sourceCode[10000];
+    char* sourceCode= malloc(10024);
     int lineCount = 0;
     while(fgets(line, sizeof(line), file)){
         strcat(sourceCode, line);
@@ -105,11 +107,11 @@ int view_gui(struct ParseState *Parser)
     
 
     /*chararray mit Liniennummerierung für angezeigten SourceCode*/
-    char lineNumbersStr[lineCount*2+1];
-    char buffer[20];  
+    char* lineNumbersStr = malloc(1024);
+    char buffer[12];  
     for(int i=1; i<=lineCount; i++){
         sprintf(buffer, "%d", i); //int to char
-        lineNumbersStr[i-1] = buffer[0];
+        strcat(lineNumbersStr, buffer);
         strcat(lineNumbersStr, "\n");	//newline Hinzufügen funktioniert noch nicht
         
     }
@@ -123,21 +125,36 @@ int view_gui(struct ParseState *Parser)
     sfText_setPosition(lineNumbers, lineNumbersPos);
 
     fileName = sfText_create();
-    sfText_setString(fileName, "Dateiname: ");
+    char* fileNameChar = malloc(1024);
+    strcpy(fileNameChar, "Dateiname: ");
+    char* val1 = malloc(1024);
+    strcpy(val1, getFileName(val1, Parser));
+    strcat(fileNameChar, val1);
+    sfText_setString(fileName, fileNameChar);
     sfText_setFont(fileName, font);
     sfText_setCharacterSize(fileName, 13);
     sfText_setColor(fileName, sfBlack);
     sfText_setPosition(fileName, fileNamePos);
-    
+
 	runningMode = sfText_create();
-    sfText_setString(runningMode, "PicoC Running mode: ");
+    char* runModeString = malloc(sizeof(char) * 1024);
+    strcpy(runModeString, "PicoC Running Mode: ");
+    char* val2 = malloc(sizeof(char) * 1024);
+    strcpy(val2, getRunningMode(val2, Parser));
+    strcat(runModeString, val2);
+    sfText_setString(runningMode, runModeString);
     sfText_setFont(runningMode, font);
     sfText_setCharacterSize(runningMode, 13);
     sfText_setColor(runningMode, sfBlack);
     sfText_setPosition(runningMode, runningModePos);
     
     executedLine = sfText_create();
-    sfText_setString(executedLine, "Executed line: ");
+    char* currentLineString = malloc(sizeof(char) * 1024);
+    strcpy(currentLineString, "Ausgefuehrte Zeile: ");
+    char* val3 = malloc(sizeof(char) * 1024);
+    strcpy(val3, getLineAsString(val3, Parser));
+    strcat(currentLineString, val3);
+    sfText_setString(executedLine, currentLineString);
     sfText_setFont(executedLine, font);
     sfText_setCharacterSize(executedLine, 13);
     sfText_setColor(executedLine, sfBlack);
@@ -151,14 +168,24 @@ int view_gui(struct ParseState *Parser)
     sfText_setPosition(functionName, functionNamePos);
 
     parameterCount = sfText_create();
-    sfText_setString(parameterCount, "Anzahl Parameter: ");
+    char* paramCount = malloc(sizeof(char) * 1024);
+    strcpy(paramCount, "Anzahl Parameter: ");
+    char* val4 = malloc(sizeof(char) * 1024);
+    strcpy(val4, getNumParamAsString(val4, Parser));
+    strcat(paramCount, val4);
+    sfText_setString(parameterCount, paramCount);
     sfText_setFont(parameterCount, font);
     sfText_setCharacterSize(parameterCount, 13);
     sfText_setColor(parameterCount, sfBlack);
     sfText_setPosition(parameterCount, parameterCountPos);
 
     returnType = sfText_create();
-    sfText_setString(returnType, "Rueckgabetyp: ");
+    char* currentReturnType = malloc(sizeof(char) * 1024);
+    strcpy(currentReturnType, "Rueckgabetyp: ");
+    char* val5 = malloc(sizeof(char) * 1024);
+    strcpy(val5, getRetDetails(val5, Parser));
+    strcat(currentReturnType, val5);
+    sfText_setString(returnType, currentReturnType);
     sfText_setFont(returnType, font);
     sfText_setCharacterSize(returnType, 13);
     sfText_setColor(returnType, sfBlack);
@@ -197,12 +224,16 @@ int view_gui(struct ParseState *Parser)
 				else if(event.key.code == sfKeyUp){
 					printf("Up Arrow pressed! \n");
                     codePos.y += (float)10.0;
+                    lineNumbersPos.y += (float)10.0;
                     sfText_setPosition(code, codePos);
+                    sfText_setPosition(lineNumbers, lineNumbersPos);
 				}
 				else if(event.key.code == sfKeyDown){
 					printf("Down Arrow pressed! \n");
                     codePos.y -= (float)10.0;
+                    lineNumbersPos.y -= (float)10.0;
                     sfText_setPosition(code, codePos);
+                    sfText_setPosition(lineNumbers, lineNumbersPos);
 				}
 				
 			}
@@ -222,6 +253,7 @@ int view_gui(struct ParseState *Parser)
         /* Draw the text */
         sfRenderWindow_drawText(window, nextStep, NULL);
         sfRenderWindow_drawText(window, code, NULL);
+        sfRenderWindow_drawText(window, lineNumbers, NULL);
         sfRenderWindow_drawText(window, fileName, NULL);
         sfRenderWindow_drawText(window, runningMode, NULL);
         sfRenderWindow_drawText(window, executedLine, NULL);
@@ -240,7 +272,10 @@ int view_gui(struct ParseState *Parser)
     /* Cleanup resources */
     sfFont_destroy(font);
     sfText_destroy(nextStep);
-    sfText_destroy(code);   
+    sfText_destroy(code);
+    sfText_destroy(lineNumbers);
+    free(sourceCode);
+    free(lineNumbersStr);
     sfText_destroy(fileName);
     sfText_destroy(runningMode);
     sfText_destroy(executedLine);
