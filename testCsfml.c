@@ -11,8 +11,8 @@ int view_gui(struct ParseState *Parser)
     sfFont* font;
     sfText* code;
     sfVector2f codePos = {50, 80};
-//    sfText* lineNumbers;
-//   sfVector2f lineNumbersPos = {20, 80};  
+    sfText* lineNumbers;
+    sfVector2f lineNumbersPos = {20, 80};  
     sfText* nextStep;
     sfVector2f nextStepPos = {800, 21};
     sfText* fileName;
@@ -90,7 +90,7 @@ int view_gui(struct ParseState *Parser)
     //strcpy(fname, getFileName(fname, Parser));
     FILE* file = fopen("test.c", "r");
     char line[256];
-    char* sourceCode= malloc(sizeof(char) * 10024);;
+    char* sourceCode= malloc(10024);
     int lineCount = 0;
     while(fgets(line, sizeof(line), file)){
         strcat(sourceCode, line);
@@ -107,27 +107,27 @@ int view_gui(struct ParseState *Parser)
     
 
     /*chararray mit Liniennummerierung für angezeigten SourceCode*/
-    char lineNumbersStr[lineCount*2+1];
-    char buffer[20];  
+    char* lineNumbersStr = malloc(1024);
+    char buffer[12];  
     for(int i=1; i<=lineCount; i++){
-       /* sprintf(buffer, "%d", i); //int to char
-        lineNumbersStr[i-1] = buffer[0];
+        sprintf(buffer, "%d", i); //int to char
+        strcat(lineNumbersStr, buffer);
         strcat(lineNumbersStr, "\n");	//newline Hinzufügen funktioniert noch nicht
-        */
+        
     }
    
     
- /*   lineNumbers = sfText_create();
+    lineNumbers = sfText_create();
     sfText_setString(lineNumbers, lineNumbersStr);
     sfText_setFont(lineNumbers, font);
     sfText_setCharacterSize(lineNumbers, 13);
     sfText_setColor(lineNumbers, sfBlack);
     sfText_setPosition(lineNumbers, lineNumbersPos);
-*/
+
     fileName = sfText_create();
-    char* fileNameChar = malloc(sizeof(char) * 1024);
+    char* fileNameChar = malloc(1024);
     strcpy(fileNameChar, "Dateiname: ");
-    char* val1 = malloc(sizeof(char) * 1024);
+    char* val1 = malloc(1024);
     strcpy(val1, getFileName(val1, Parser));
     strcat(fileNameChar, val1);
     sfText_setString(fileName, fileNameChar);
@@ -224,12 +224,16 @@ int view_gui(struct ParseState *Parser)
 				else if(event.key.code == sfKeyUp){
 					printf("Up Arrow pressed! \n");
                     codePos.y += (float)10.0;
+                    lineNumbersPos.y += (float)10.0;
                     sfText_setPosition(code, codePos);
+                    sfText_setPosition(lineNumbers, lineNumbersPos);
 				}
 				else if(event.key.code == sfKeyDown){
 					printf("Down Arrow pressed! \n");
                     codePos.y -= (float)10.0;
+                    lineNumbersPos.y -= (float)10.0;
                     sfText_setPosition(code, codePos);
+                    sfText_setPosition(lineNumbers, lineNumbersPos);
 				}
 				
 			}
@@ -249,7 +253,7 @@ int view_gui(struct ParseState *Parser)
         /* Draw the text */
         sfRenderWindow_drawText(window, nextStep, NULL);
         sfRenderWindow_drawText(window, code, NULL);
-        //sfRenderWindow_drawText(window, lineNumbers, NULL);
+        sfRenderWindow_drawText(window, lineNumbers, NULL);
         sfRenderWindow_drawText(window, fileName, NULL);
         sfRenderWindow_drawText(window, runningMode, NULL);
         sfRenderWindow_drawText(window, executedLine, NULL);
@@ -269,8 +273,9 @@ int view_gui(struct ParseState *Parser)
     sfFont_destroy(font);
     sfText_destroy(nextStep);
     sfText_destroy(code);
-    //sfText_destroy(lineNumbers);
+    sfText_destroy(lineNumbers);
     free(sourceCode);
+    free(lineNumbersStr);
     sfText_destroy(fileName);
     sfText_destroy(runningMode);
     sfText_destroy(executedLine);
