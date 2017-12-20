@@ -1,0 +1,14 @@
+ 1. Informationen aus HashTable bekommen und in tools bereitstellen
+
+ 2. Gui-Fenster nicht mehrfach erstellen und schließen
+
+ 3. Hervorheben der ausgeführten Zeile
+
+ 4. Stackframes visualisieren
+
+ 5. tools anpassen (teilweise StackFrame als Parameter anstatt ParseState)
+
+ 6. Auswahl GUI/Console (Ifdef endif)
+
+ 7. Doku-Mist (Anforderungen, Einleitung ....)
+
