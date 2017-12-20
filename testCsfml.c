@@ -9,13 +9,13 @@ int view_gui(struct ParseState *Parser)
     sfVideoMode mode = {1200, 600, 32};
     sfRenderWindow* window;
     sfFont* font;
-    sfText* nextStep;
+    sfText* code;
     sfVector2f codePos = {50, 80};
     sfText* lineNumbers;
-    sfVector2f lineNumbersPos = {20, 80};
+    sfVector2f lineNumbersPos = {20, 80};  
+    sfText* nextStep;
+    sfVector2f nextStepPos = {800, 21};
     sfText* fileName;
-    sfVector2f nextStepPos = {500, 21};
-    sfText* code;
     sfVector2f fileNamePos = {802, 56};
     sfText* runningMode;
     sfVector2f runningModePos = {802, 81};
@@ -51,7 +51,7 @@ int view_gui(struct ParseState *Parser)
     window = sfRenderWindow_create(mode, "PicoC GUI", sfResize | sfClose, NULL);
     if (!window)
         return 1;
-    
+    sfRenderWindow_setFramerateLimit(window, 60);
     
     infoBlock = sfRectangleShape_create();
     sfRectangleShape_setSize(infoBlock, infoBlockSize);
@@ -193,11 +193,16 @@ int view_gui(struct ParseState *Parser)
 					printf("Space pressed! \n");
 					sfRenderWindow_close(window);
 				}
+                /*Move displayed source code up or down with arrow keys */
 				else if(event.key.code == sfKeyUp){
 					printf("Up Arrow pressed! \n");
+                    codePos.y += (float)10.0;
+                    sfText_setPosition(code, codePos);
 				}
 				else if(event.key.code == sfKeyDown){
 					printf("Down Arrow pressed! \n");
+                    codePos.y -= (float)10.0;
+                    sfText_setPosition(code, codePos);
 				}
 				
 			}
