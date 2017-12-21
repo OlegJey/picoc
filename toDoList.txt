@@ -1,4 +1,4 @@
- 1. Informationen aus HashTable bekommen und in tools bereitstellen
+ 1. Informationen aus HashTable bekommen und in tools bereitstellen //erfüllt für Lokale Werte
 
  2. Gui-Fenster nicht mehrfach erstellen und schließen
 

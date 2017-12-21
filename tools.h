@@ -11,7 +11,7 @@ extern char* getRunningMode(char* to, struct ParseState *Parser); //done
 
 extern char* getFileName(char* to, struct ParseState *Parser); //done
 
-extern char* getLocalVarAndVal(char* to, struct ParseState *Parser); // TBD!!
+extern char* getLocalVarAndVal(char* to, struct ParseState *Parser); // done(?)
 
 extern char* getGlobalVarAndVal(char* to, struct ParseState *Parser); // TBD!!
 
@@ -43,11 +43,10 @@ extern int getScopeID(struct ParseState *Parser); //done
 
 extern int countStackFrames(struct ParseState *Parser); //done
 
-//void type
 
-extern void printStrTbl(Picoc  *pc);
+//misc
 
-
+extern char* resolveVal(char* to,char* name, struct Value *Val);
 
 
 
