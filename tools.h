@@ -5,19 +5,21 @@
 #include "picoc.h" // this already includes many powerful standard libs like string.h or math.h
 
 // remember to malloc and free all the resources you need to use the following char* functions 
-extern char* getRetDetails(char* to, struct ParseState *Parser); //done
+extern char* getRetDetails(char* to, struct StackFrame *Frame); //done 
 
 extern char* getRunningMode(char* to, struct ParseState *Parser); //done
 
 extern char* getFileName(char* to, struct ParseState *Parser); //done
 
-extern char* getLocalVarAndVal(char* to, struct ParseState *Parser); // done(?)
+extern char* getFuncName(char* to, struct StackFrame *Frame); // done
+
+extern char* getLocalVarAndVal(char* to, struct StackFrame *Frame); // done 
 
 extern char* getGlobalVarAndVal(char* to, struct ParseState *Parser); // TBD!!
 
 extern char* getLineAsString(char* to,struct ParseState *Parser); //done
 
-extern char* getNumParamAsString(char* to, struct ParseState *Parser); //done
+extern char* getNumParamAsString(char* to, struct StackFrame *Frame); //done 
 
 extern char* getScopeIDAsString(char* to, struct ParseState *Parser); //done
 
@@ -28,16 +30,19 @@ extern void* get_HeapStackTop(struct ParseState *Parser);//done
 
 extern void* get_StackFrame(struct ParseState *Parser);//done
 
-//before we actually "run" code, TopStackFrame will be NULL
+//before we actually "run" code, TopStackFrame will be NULL!!
 extern struct StackFrame* get_TopStackFrame(struct ParseState *Parser); //done
 
 //if there is no ProviousStackFrame return will be NULL!!
 extern struct StackFrame* get_PreviousStackFrame(struct ParseState *Parser); //done
 
+//dont use it!!
+extern struct ParseState* getOldParser(struct ParseState *Parser);
+
 //return int
 extern int getLine(struct ParseState *Parser); //done
 
-extern int getNumParam(struct ParseState *Parser); //done
+extern int getNumParam(struct StackFrame *Frame); //done
 
 extern int getScopeID(struct ParseState *Parser); //done	
 

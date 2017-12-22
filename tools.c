@@ -5,7 +5,7 @@ char* resolveVal(char* to,char * name,struct Value *Val){
 
 		char* val = malloc(sizeof(char) * 1024);	
 	
-	
+		strcpy(to,"");
 
 	
 	if(Val != NULL){
@@ -114,7 +114,7 @@ char* resolveVal(char* to,char * name,struct Value *Val){
 
 char* getRunningMode(char* to, struct ParseState *Parser){
 
-
+	strcpy(to,"");
 	switch(Parser->Mode){
 
 	case 0: to = "Run";
@@ -147,7 +147,7 @@ char* getRunningMode(char* to, struct ParseState *Parser){
 
 char* getFileName(char* to, struct ParseState *Parser){
 
-
+	strcpy(to,"");
 	if(Parser->FileName)
 	strcpy(to,Parser->FileName);
 	else to = "No FileName to display at this moment";
@@ -155,86 +155,100 @@ char* getFileName(char* to, struct ParseState *Parser){
 	return to;
 }
 
-char* getRetDetails(char* to, struct ParseState *Parser){   
 
-	char* val = malloc(sizeof(char) * 1024);	
+char* getFuncName(char* to, struct StackFrame *Frame){
+
+	strcpy(to,"");
+	if(Frame)
+	strcpy(to,Frame->FuncName);
+	else to = "No FuncName to display at this moment";
+	
+	return to;
+
+}
+
+
+
+
+char* getRetDetails(char* to, struct StackFrame *Frame){   
+
+	char* val = malloc(sizeof(char) * 1024);
+	strcpy(to,""); 	
 		
-	if(Parser->pc->TopStackFrame){
+	if(NULL != Frame){
 	
 	
-		switch(Parser->pc->TopStackFrame->ReturnValue->Typ->Base){
+		switch(Frame->ReturnValue->Typ->Base){
 		
 		case 0: 
-		to = "ReturnType: Void";
+		strcpy(to,"ReturnType: Void"); 
 
 		break;
 //NOTE: string literals declared with char* are stored in readonly section. its necessary to use strcpy here so strcat is able to write
 		case 1: 
 		strcpy(to,"ReturnType: Int, Value: ");  
-		sprintf(val,"%d",Parser->pc->TopStackFrame->ReturnValue->Val->Integer);
+		sprintf(val,"%d",Frame->ReturnValue->Val->Integer);
 		strcat(to,val);
 		
 		break;
 
 		case 2: 
 		strcpy(to,"ReturnType: Short, Value: ");
-		sprintf( val, "%hd",Parser->pc->TopStackFrame->ReturnValue->Val->ShortInteger);
+		sprintf( val, "%hd",Frame->ReturnValue->Val->ShortInteger);
 		strcat(to,val);
 		break;
 		
 		case 3: 
 		strcpy(to,"ReturnType: Char, Value: ");
-		sprintf( val, "%c",Parser->pc->TopStackFrame->ReturnValue->Val->Character);
+		sprintf( val, "%c",Frame->ReturnValue->Val->Character);
 		strcat(to,val);
 	
 		break;
 
 		case 4: 
 		strcpy(to,"ReturnType: Long, Value: ");
-		sprintf( val, "%ld",Parser->pc->TopStackFrame->ReturnValue->Val->LongInteger);
+		sprintf( val, "%ld",Frame->ReturnValue->Val->LongInteger);
 		strcat(to,val);
 	
 		break;
 
 		case 5: 
 		strcpy(to,"ReturnType: Unsigned Int, Value: ");
-		sprintf( val, "%u",Parser->pc->TopStackFrame->ReturnValue->Val->UnsignedInteger);
+		sprintf( val, "%u",Frame->ReturnValue->Val->UnsignedInteger);
 		strcat(to,val);
 
 		break;
 
 		case 6: 
 		strcpy(to,"ReturnType: Unsigned Short, Value: ");
-		sprintf( val, "%hu",
-		Parser->pc->TopStackFrame->ReturnValue->Val->UnsignedShortInteger);
+		sprintf( val, "%hu",Frame->ReturnValue->Val->UnsignedShortInteger);
 		strcat(to,val);
 	
 		break;
 		
 		case 7: 
 		strcpy(to,"ReturnType: Unsigned Char, Value: ");
-		sprintf( val, "%u",Parser->pc->TopStackFrame->ReturnValue->Val->Integer);
+		sprintf( val, "%u",Frame->ReturnValue->Val->Integer);
 		strcat(to,val);
 	
 		break;
 
 		case 8:
 		strcpy(to,"ReturnType: Unsigned Long, Value: ");
-		sprintf( val, "%lu",
-		Parser->pc->TopStackFrame->ReturnValue->Val-> UnsignedLongInteger);
+		sprintf( val, "%lu",Frame->ReturnValue->Val-> UnsignedLongInteger);
 		strcat(to,val);
 	
 		break;
 		
 		case 9: 
 		strcpy(to,"ReturnType: Float, Value: ");
-		sprintf( val, "%f",Parser->pc->TopStackFrame->ReturnValue->Val->FP);
+		sprintf( val, "%f",Frame->ReturnValue->Val->FP);
 		strcat(to,val);
 		
 
 		case 12: 
 		strcpy(to,"ReturnType: Pointer, Value: ");
-		sprintf( val, "%p",Parser->pc->TopStackFrame->ReturnValue->Val->Pointer);
+		sprintf( val, "%p",Frame->ReturnValue->Val->Pointer);
 		strcat(to,val);
 
 		break;
@@ -266,7 +280,7 @@ int getLine(struct ParseState *Parser){
 }
 
 char* getLineAsString(char* to, struct ParseState *Parser){
-
+	strcpy(to,"");
 	if(Parser)sprintf(to, "%d", Parser->Line);
 		else to = "no Line at this Moment";
 
@@ -274,20 +288,22 @@ char* getLineAsString(char* to, struct ParseState *Parser){
 
 }
 
-int getNumParam(struct ParseState *Parser){
+int getNumParam(struct StackFrame *Frame){
 	
 	int ret = 0;	
 
-	if(Parser) ret =  Parser->pc->TopStackFrame->NumParams;
+	if(Frame) ret =  Frame->NumParams;
 
 	return ret;
 
 }
 
 
-char* getNumParamAsString(char* to, struct ParseState *Parser){
-
-	if(Parser->pc->TopStackFrame)sprintf(to,"%d", Parser->pc->TopStackFrame->NumParams);
+char* getNumParamAsString(char* to, struct StackFrame *Frame){
+	
+	strcpy(to,"");
+	
+	if(Frame)sprintf(to,"%d",Frame->NumParams);
 	else to = "cant get NumParam";
 	return to; 
 }
@@ -306,6 +322,8 @@ int getScopeID(struct ParseState *Parser){
 }
 
 char* getScopeIDAsString(char* to, struct ParseState *Parser){
+
+	strcpy(to,"");
 
 	if(Parser)sprintf(to,"%d",Parser->ScopeID);
 	
@@ -373,12 +391,18 @@ struct StackFrame* get_TopStackFrame(struct ParseState *Parser){
 
 struct StackFrame* get_PreviousStackFrame(struct ParseState *Parser){
 	
-	struct StackFrame *ret;
-
-	if(Parser->pc->TopStackFrame->PreviousStackFrame) 
-	ret = Parser->pc->TopStackFrame->PreviousStackFrame; 
+	struct StackFrame *Previous = NULL; 	
+		if(Parser->pc->TopStackFrame)
+		{
+			
+			if(Parser->pc->TopStackFrame->PreviousStackFrame)
+			{
+				Previous = Parser->pc->TopStackFrame->PreviousStackFrame;
+			}
 	
-	return ret;
+		}
+	
+	return Previous;
 
 }
 
@@ -390,6 +414,7 @@ char* getGlobalVarAndVal(char* to, struct ParseState *Parser){
 	char* val = malloc(sizeof(char) * 1024);
 	//in fact its necessary to erase our String
 	strcpy(to,""); 
+	
 	struct Value *wert;
 	if(Parser->pc){
 	
@@ -434,16 +459,16 @@ return to;
 }
 
 
-char* getLocalVarAndVal(char* to, struct ParseState *Parser){
+char* getLocalVarAndVal(char* to, struct StackFrame *Frame){
 	
 	int Count = 0;
 	char* val = malloc(sizeof(char) * 1024);
 	//in fact its necessary to erase our String
 	strcpy(to,"");
 		
-	if(Parser->pc->TopStackFrame){
+	if(Frame != NULL){
 	
-	struct Table *Tbl = &Parser->pc->TopStackFrame->LocalTable;
+	struct Table *Tbl = &Frame->LocalTable;
 	
 	struct TableEntry *Entry;	
 	
@@ -479,8 +504,23 @@ char* getLocalVarAndVal(char* to, struct ParseState *Parser){
 return to;
 }
 
+//not working yet
+struct ParseState* getOldParser(struct ParseState *Parser){
+		
+	struct ParseState *old;
 
 
+	if(Parser->pc->TopStackFrame){
+
+		if(&Parser->pc->TopStackFrame->ReturnParser != NULL){
+			old = &Parser->pc->TopStackFrame->ReturnParser;
+		}
+		
+	}
+	else old = NULL;
+	
+	return old;
+}
 
 
 

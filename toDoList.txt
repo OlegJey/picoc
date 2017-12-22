@@ -6,9 +6,11 @@
 
  4. Stackframes visualisieren
 
- 5. tools anpassen (teilweise StackFrame als Parameter anstatt ParseState)
+ 5. tools anpassen (teilweise StackFrame als Parameter anstatt ParseState) //done
 
  6. Auswahl GUI/Console (Ifdef endif) //done
 
- 7. Doku-Mist (Anforderungen, Einleitung ....)
+ 7. Consolen Output verbessern //done
+
+ 8. Doku-Mist (Anforderungen, Einleitung ....)
 

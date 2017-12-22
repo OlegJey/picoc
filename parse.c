@@ -46,6 +46,9 @@ void StackFrameCopy(struct StackFrame *To, struct StackFrame *From)
 void View(struct ParseState *Parser){
 	
 	//char* mode;
+	char* local = malloc(sizeof(char)*1024);
+	char* retDet = malloc(sizeof(char)*1024);
+	char* retDetOld = malloc(sizeof(char)*1024);
 	system("clear");
 
 	printf("++++++++Basic Informations+++++++\n\n");
@@ -57,41 +60,23 @@ void View(struct ParseState *Parser){
 
 	printf("++++++++Function Informations+++++++\n\n");
 	if(Parser->pc->TopStackFrame){
-		printf("Name of the Function we are in:\t\t\t%s\n",
+		printf("Name of the Function we are in:\t\t\t%s\n\n",
 		Parser->pc->TopStackFrame->FuncName);
 		
 		printf("Number of Parameters of the Function we are in: %d\n",
 		Parser->pc->TopStackFrame->NumParams);
 		
+		
+		getLocalVarAndVal(local,Parser->pc->TopStackFrame);
+		printf("\nVariablen und Werte: ");
+		printf("%s\n\n", local);
 		//First example how to deal with the return types and values. 
-		if(Parser->pc->TopStackFrame){
 		
-
-		/*Base is an enum and contains all the different return types we can think 			of (e.g. 0=void, 1=int,...)*/ 
-			switch(Parser->pc->TopStackFrame->ReturnValue->Typ->Base)
-			{
+		getRetDetails(retDet,Parser->pc->TopStackFrame);
+				
+		printf("%s\n\n",retDet);
 		
-				case 0:
-				printf("with the return Type Void\n");
-				break;
-
-		//In Val we can find our actual Values. Such as our Integer in this case
-				case 1: 
-				printf("with the return Type Integer and Value: %d\n",
-				Parser->pc->TopStackFrame->ReturnValue->Val->Integer); 
-				break;
 		
-				case 3:
-				printf("with the return Type Short and Value: %d\n",
-				Parser->pc->TopStackFrame->ReturnValue->Val->ShortInteger); 
-				break;
-
-		//Placeholder for following types
-
-
-			}
-		
-		}
 		printf("++++++++Function Informations+++++++\n\n");
 	}
 	else printf("++++++++No running Function yet+++++++\n\n");
@@ -116,6 +101,9 @@ void View(struct ParseState *Parser){
 		}
 	char c;
 	c = getchar();
+
+	free(local);
+	free(retDet);
 }
 
 
@@ -1005,6 +993,11 @@ enum ParseResult ParseStatement(struct ParseState *Parser,
 
 #if (CONSOLE_OUT != 0)
 	View(Parser);
+	struct ParseState *old;
+	//old = getOldParser(Parser);
+	if(old != NULL){
+	//View(getOldParser(Parser));
+	}
 #endif	
 	/*
 	char* text = malloc(sizeof(char) * 1024);
