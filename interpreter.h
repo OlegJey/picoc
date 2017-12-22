@@ -193,19 +193,19 @@ struct ParseState {
 
 /* values */
 enum BaseType {
-    TypeVoid,                   /* no type */
-    TypeInt,                    /* integer */
-    TypeShort,                  /* short integer */
-    TypeChar,                   /* a single character (signed) */
-    TypeLong,                   /* long integer */
-    TypeUnsignedInt,            /* unsigned integer */
-    TypeUnsignedShort,          /* unsigned short integer */
-    TypeUnsignedChar,           /* unsigned 8-bit number */ /* must be before unsigned long */
-    TypeUnsignedLong,           /* unsigned long integer */
-    TypeFP,                     /* floating point */
+    TypeVoid,                   /* no type   	0*/ 
+    TypeInt,                    /* integer 	1*/
+    TypeShort,                  /* short integer 2*/
+    TypeChar,                   /* a single character (signed) 	3*/
+    TypeLong,                   /* long integer  4*/
+    TypeUnsignedInt,            /* unsigned integer 	5*/
+    TypeUnsignedShort,          /* unsigned short integer 	6*/
+    TypeUnsignedChar,           /* unsigned 8-bit number 7*/ /* must be before unsigned long */
+    TypeUnsignedLong,           /* unsigned long integer 8*/
+    TypeFP,                     /* floating point 9*/
     TypeFunction,               /* a function */
     TypeMacro,                  /* a macro */
-    TypePointer,                /* a pointer */
+    TypePointer,                /* a pointer  12*/
     TypeArray,                  /* an array of a sub-type */
     TypeStruct,                 /* aggregate type */
     TypeUnion,                  /* merged type */
@@ -487,6 +487,9 @@ struct Picoc_Struct {
     struct TableEntry *StringHashTable[STRING_TABLE_SIZE];
     char *StrEmpty;
 };
+
+
+
 
 /* table.c */
 extern void TableInit(Picoc *pc);

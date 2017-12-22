@@ -17,6 +17,10 @@
 
 /* Override via STACKSIZE environment variable */
 #define PICOC_STACK_SIZE (128000*4)
+//
+#define CONSOLE_OUT
+//
+#define GUI
 
 int main(int argc, char **argv)
 {

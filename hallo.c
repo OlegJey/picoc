@@ -1,13 +1,16 @@
 #include<stdio.h>
+
+
 int foo(int b){
-	b = 2;			
+	b = 2;
+	float d = 2.4;			
 	return b;
 }
 
 void bar(){
 	int a,b,c;
 	a = 2;
-	b = a;
+	b = foo(2);
 	c = a+b;
 }
 int main() {

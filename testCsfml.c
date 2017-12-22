@@ -5,7 +5,8 @@
 #include "tools.h"
 
 int view_gui(struct ParseState *Parser)
-{
+{	
+
     sfVideoMode mode = {1200, 600, 32};
     sfRenderWindow* window;
     sfFont* font; 
