@@ -5,6 +5,9 @@
 #include <stdio.h>
 
 
+// 0 for not output 
+#define CONSOLE_OUT 1
+#define GUI 0 
 
 static enum ParseResult ParseStatementMaybeRun(struct ParseState *Parser,
         int Condition, int CheckTrailingSemicolon);
@@ -26,6 +29,7 @@ static int gEnableDebugger = true;
 #else
 static int gEnableDebugger = false;
 #endif
+
 
 
 
@@ -110,6 +114,8 @@ void View(struct ParseState *Parser){
 			}
 	
 		}
+	char c;
+	c = getchar();
 }
 
 
@@ -985,22 +991,33 @@ enum ParseResult ParseStatement(struct ParseState *Parser,
     }
     
 	
-	// CSFML function call at this point works
-
-if(Parser->Mode != 1 && (strcmp(Parser->FileName, "startup") != 0) && (strcmp(Parser->FileName, "stdio.h") != 0)){ //lets skip the RunningMode "Skip", nothing happens here anyway
-
-	view_gui(Parser);
-	View(Parser);
-	char* text = malloc(sizeof(char) * 1024);
-	//getLocalVarAndVal(text, Parser);	
-	printf("\n%s", text);
-	free(text);
 	
-	char c;
-	//c = getchar();
 
-}	
-	//UpdateModel(m, Parser);
+	if(Parser->Mode != 1 
+		&& (strcmp(Parser->FileName, "startup") != 0) 
+		&& (strcmp(Parser->FileName, "stdio.h") != 0))
+	{ 
+	//lets skip the RunningMode "Skip", nothing happens here anyway
+
+#if (GUI != 0)
+	view_gui(Parser);
+#endif
+
+#if (CONSOLE_OUT != 0)
+	View(Parser);
+#endif	
+	/*
+	char* text = malloc(sizeof(char) * 1024);
+	
+	getGlobalVarAndVal(text, Parser);
+	printf("\nbye bye");	
+	printf("%s\n", text);
+	free(text);
+	*/
+	
+
+	}	
+	
 	
 	return ParseResultOk;
 }
@@ -1036,7 +1053,7 @@ void PicocParse(Picoc *pc, const char *FileName, const char *Source,
     /* do the parsing */
     LexInitParser(&Parser, pc, Source, Tokens, RegFileName, RunIt,
         EnableDebugger);
-	printf("Source Code parsed\n");   
+	  
     do {
 	
 	//printf("DO-While\n");	

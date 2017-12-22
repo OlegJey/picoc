@@ -8,7 +8,7 @@
 
  5. tools anpassen (teilweise StackFrame als Parameter anstatt ParseState)
 
- 6. Auswahl GUI/Console (Ifdef endif)
+ 6. Auswahl GUI/Console (Ifdef endif) //done
 
  7. Doku-Mist (Anforderungen, Einleitung ....)
 
