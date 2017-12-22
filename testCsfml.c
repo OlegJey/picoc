@@ -178,7 +178,7 @@ int view_gui(struct ParseState *Parser)
     char* paramCount = malloc(sizeof(char) * 1024);
     strcpy(paramCount, "Anzahl Parameter: ");
     char* val4 = malloc(sizeof(char) * 1024);
-    strcpy(val4, getNumParamAsString(val4, Parser));
+	if(Parser->pc->TopStackFrame)getNumParamAsString(val4, Parser->pc->TopStackFrame);
     strcat(paramCount, val4);
     sfText_setString(parameterCount, paramCount);
     sfText_setFont(parameterCount, font);
@@ -190,7 +190,8 @@ int view_gui(struct ParseState *Parser)
     char* currentReturnType = malloc(sizeof(char) * 1024);
     strcpy(currentReturnType, "Rueckgabetyp: ");
     char* val5 = malloc(sizeof(char) * 1024);
-    strcpy(val5, getRetDetails(val5, Parser));
+
+	if(Parser->pc->TopStackFrame) getRetDetails(val5, Parser->pc->TopStackFrame);
     strcat(currentReturnType, val5);
     sfText_setString(returnType, currentReturnType);
     sfText_setFont(returnType, font);
