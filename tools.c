@@ -14,7 +14,7 @@ char* resolveVal(char* to,char * name,struct Value *Val){
 		switch(Val->Typ->Base){
 		
 		case 0: 
-		to = "Type: Void";
+		strcpy(to,"Type: Void");
 
 		break;
 //NOTE: string literals declared with char* are stored in readonly section. its necessary to use strcpy here so strcat is able to write
@@ -97,13 +97,13 @@ char* resolveVal(char* to,char * name,struct Value *Val){
 
 		break;
 
-		default: to = "Not supported Type";
+		default: strcpy(to,"Not supported Type");
 
 		}
 	
 	}
 
-	else to = "no ReturnType at this moment";
+	else strcpy(to,"no ReturnType at this moment");
 	
 
 	free(val);
@@ -112,33 +112,34 @@ char* resolveVal(char* to,char * name,struct Value *Val){
 	return to;
 }
 
-char* getRunningMode(char* to, struct ParseState *Parser){
+char* getRunningMode(char * to, struct ParseState *Parser){
 
 	strcpy(to,"");
+	
 	switch(Parser->Mode){
 
-	case 0: to = "Run";
+	case 0: strcpy(to,"Run");
 	break;
 	
-	case 1: to = "Skip";
+	case 1: strcpy(to,"Skip");
 	break;
 
-	case 2: to = "Return";
+	case 2: strcpy(to,"Return");
 	break;
 
-	case 3: to = "CaseSearch";
+	case 3: strcpy(to,"CaseSearch");
 	break;
 	
-	case 4: to = "Break";
+	case 4: strcpy(to,"Break");
 	break;
 
-	case 5: to = "Continue";
+	case 5: strcpy(to,"Continue");
 	break;
 
-	case 6: to = "GoTo";
+	case 6: strcpy(to,"GoTo");
 	break;
 
-	default: to = "No RunningMode detected";
+	default: strcpy(to,"No RunningMode detected");
 
 	}
 	return to;
@@ -150,7 +151,7 @@ char* getFileName(char* to, struct ParseState *Parser){
 	strcpy(to,"");
 	if(Parser->FileName)
 	strcpy(to,Parser->FileName);
-	else to = "No FileName to display at this moment";
+	else strcpy(to,"No FileName to display at this moment");
 	
 	return to;
 }
@@ -161,7 +162,7 @@ char* getFuncName(char* to, struct StackFrame *Frame){
 	strcpy(to,"");
 	if(Frame)
 	strcpy(to,Frame->FuncName);
-	else to = "No FuncName to display at this moment";
+	else strcpy(to,"No FuncName to display at this moment");
 	
 	return to;
 
@@ -253,13 +254,13 @@ char* getRetDetails(char* to, struct StackFrame *Frame){
 
 		break;
 
-		default: to = "Not supported ReturnType";
+		default: strcpy(to,"Not supported ReturnType");
 
 		}
 	
 	}
 
-	else to = "no ReturnType at this moment";
+	else strcpy(to,"no ReturnType at this moment");
 
 	free(val);
 	
@@ -282,7 +283,7 @@ int getLine(struct ParseState *Parser){
 char* getLineAsString(char* to, struct ParseState *Parser){
 	strcpy(to,"");
 	if(Parser)sprintf(to, "%d", Parser->Line);
-		else to = "no Line at this Moment";
+		else strcpy(to,"no Line at this Moment");
 
 	return to;
 
@@ -304,7 +305,7 @@ char* getNumParamAsString(char* to, struct StackFrame *Frame){
 	strcpy(to,"");
 	
 	if(Frame)sprintf(to,"%d",Frame->NumParams);
-	else to = "cant get NumParam";
+	else strcpy(to,"cant get NumParam");
 	return to; 
 }
 
@@ -327,7 +328,7 @@ char* getScopeIDAsString(char* to, struct ParseState *Parser){
 
 	if(Parser)sprintf(to,"%d",Parser->ScopeID);
 	
-	else to = "cant get scopeID";
+	else  strcpy(to,"cant get scopeID");
 	
 	return to;
 }

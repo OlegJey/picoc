@@ -41,34 +41,36 @@ void StackFrameCopy(struct StackFrame *To, struct StackFrame *From)
 
 
 
-
+#if (CONSOLE_OUT != 0)
 
 void View(struct ParseState *Parser){
 	
-	//char* mode;
+	char* mode = malloc(sizeof(char)*1024);
 	char* local = malloc(sizeof(char)*1024);
 	char* retDet = malloc(sizeof(char)*1024);
-	char* retDetOld = malloc(sizeof(char)*1024);
+	
 	system("clear");
 
 	printf("++++++++Basic Informations+++++++\n\n");
-	printf("executed Line: %d",Parser->Line);
-	printf("\t\t in File: %s\n\n",Parser->FileName);
 	
-	
+	//printf("Mode: %d",Parser->Mode);
+	printf("executed line: %d",Parser->Line);
+	printf("\t\t in file: %s\n\n",Parser->FileName);
+	getRunningMode(mode,Parser);
+	printf("PicoC RunningMode: %s\n\n",mode);
 	
 
 	printf("++++++++Function Informations+++++++\n\n");
 	if(Parser->pc->TopStackFrame){
-		printf("Name of the Function we are in:\t\t\t%s\n\n",
+		printf("Name of the function we are in:\t\t\t%s\n\n",
 		Parser->pc->TopStackFrame->FuncName);
 		
-		printf("Number of Parameters of the Function we are in: %d\n",
+		printf("Number of parameters of the function we are in: %d\n",
 		Parser->pc->TopStackFrame->NumParams);
 		
 		
 		getLocalVarAndVal(local,Parser->pc->TopStackFrame);
-		printf("\nVariablen und Werte: ");
+		printf("\nfunction's local data: ");
 		printf("%s\n\n", local);
 		//First example how to deal with the return types and values. 
 		
@@ -79,7 +81,7 @@ void View(struct ParseState *Parser){
 		
 		printf("++++++++Function Informations+++++++\n\n");
 	}
-	else printf("++++++++No running Function yet+++++++\n\n");
+	else printf("++++++++No running function yet+++++++\n\n");
 	
 	printf("++++++++Memory Informations+++++++\n\n");	
 	printf("HeapBottom located at: \t\t%p\n", Parser->pc->HeapBottom);
@@ -94,17 +96,21 @@ void View(struct ParseState *Parser){
 			Previous = Parser->pc->TopStackFrame->PreviousStackFrame;
 			if(Previous)
 			{
-			printf("called by Function: %s\n", Previous->FuncName);		
+			printf("called by function: %s\n", Previous->FuncName);		
 			printf("return adress(Old Base Pointer): %p\n",(void *)Previous -8);	
 			}
 	
 		}
-	char c;
-	c = getchar();
-
+	
+	printf("\n++++++++++ENTER-NEXT+++++++++++++");
+	getchar();
+	
+	free(mode);
 	free(local);
 	free(retDet);
+	
 }
+#endif
 
 
 void UpdateModel(struct Model *m, struct ParseState *Parser){
@@ -716,7 +722,7 @@ enum ParseResult ParseStatement(struct ParseState *Parser,
     struct Value *LexerValue;
     struct Value *VarValue;
     struct ParseState PreState;
-    struct Model *m;
+  
 #ifdef DEBUGGER
     /* if we're debugging, check for a breakpoint */
     if (Parser->DebugMode && Parser->Mode == RunModeRun)
@@ -993,11 +999,6 @@ enum ParseResult ParseStatement(struct ParseState *Parser,
 
 #if (CONSOLE_OUT != 0)
 	View(Parser);
-	struct ParseState *old;
-	//old = getOldParser(Parser);
-	if(old != NULL){
-	//View(getOldParser(Parser));
-	}
 #endif	
 	/*
 	char* text = malloc(sizeof(char) * 1024);
