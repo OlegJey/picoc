@@ -7,7 +7,7 @@
 
 // 0 for not output 
 #define CONSOLE_OUT 1
-#define GUI 0
+#define GUI 1
 
 static enum ParseResult ParseStatementMaybeRun(struct ParseState *Parser,
         int Condition, int CheckTrailingSemicolon);
