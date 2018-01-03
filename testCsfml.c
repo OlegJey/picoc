@@ -506,55 +506,56 @@ int view_gui(struct ParseState *Parser)
 
         sfRenderWindow_drawRectangleShape(window, infoBlock, NULL);
 
-        switch (countStackFrames(Parser))
-        {
-            case 1:
+        
+        if(countStackFrames(Parser) >= 1){
             sfRenderWindow_drawRectangleShape(window, stackframe1, NULL);
             sfRenderWindow_drawText(window, stackFrameText1, NULL);
             sfRenderWindow_drawText(window, functionNameSF1, NULL);
             sfRenderWindow_drawText(window, parameterCount1, NULL);
             sfRenderWindow_drawText(window, returnType1, NULL);
             sfRenderWindow_drawText(window, localVar1, NULL);
-            sfRenderWindow_drawText(window, returnAddress1, NULL); break;
-
-            case 2:
+            sfRenderWindow_drawText(window, returnAddress1, NULL); 
+        }
+        if(countStackFrames(Parser) >= 2){    
             sfRenderWindow_drawRectangleShape(window, stackframe2, NULL);
             sfRenderWindow_drawText(window, stackFrameText2, NULL);
             sfRenderWindow_drawText(window, functionNameSF2, NULL);
             sfRenderWindow_drawText(window, parameterCount2, NULL);
             sfRenderWindow_drawText(window, returnType2, NULL);
             sfRenderWindow_drawText(window, localVar2, NULL);
-            sfRenderWindow_drawText(window, returnAddress2, NULL); break;
-
-            case 3:
+            sfRenderWindow_drawText(window, returnAddress2, NULL); 
+        }
+        if(countStackFrames(Parser) >= 3){    
             sfRenderWindow_drawRectangleShape(window, stackframe3, NULL);
             sfRenderWindow_drawText(window, stackFrameText3, NULL);
             sfRenderWindow_drawText(window, functionNameSF3, NULL);
             sfRenderWindow_drawText(window, parameterCount3, NULL);
             sfRenderWindow_drawText(window, returnType3, NULL);
             sfRenderWindow_drawText(window, localVar3, NULL);
-            sfRenderWindow_drawText(window, returnAddress3, NULL); break;
-
- /*            case 4:
+            sfRenderWindow_drawText(window, returnAddress3, NULL); 
+        }
+ /*     if(countStackFrames(Parser) >= 4){    
             sfRenderWindow_drawRectangleShape(window, stackframe4, NULL);
             sfRenderWindow_drawText(window, stackFrameText4, NULL);
             sfRenderWindow_drawText(window, functionNameSF4, NULL);
             sfRenderWindow_drawText(window, parameterCount4, NULL);
             sfRenderWindow_drawText(window, returnType4, NULL);
             sfRenderWindow_drawText(window, localVar4, NULL);
-            sfRenderWindow_drawText(window, returnAddress4, NULL); break;
-
-            case 5:
+            sfRenderWindow_drawText(window, returnAddress4, NULL); 
+        }
+        if(countStackFrames(Parser) >= 5){    
             sfRenderWindow_drawRectangleShape(window, stackframe5, NULL);
             sfRenderWindow_drawText(window, stackFrameText5, NULL);
             sfRenderWindow_drawText(window, functionNameSF5, NULL);
             sfRenderWindow_drawText(window, parameterCount5, NULL);
             sfRenderWindow_drawText(window, returnType5, NULL);
             sfRenderWindow_drawText(window, localVar5, NULL);
-            sfRenderWindow_drawText(window, returnAddress5, NULL); break; */
+            sfRenderWindow_drawText(window, returnAddress5, NULL);  
+        }*/
+            
 
-            default: break;
-        }
+
+         
 
         /* Draw the text */
 
