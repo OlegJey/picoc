@@ -4,6 +4,9 @@
 
 #include "picoc.h" // this already includes many powerful standard libs like string.h or math.h
 
+#ifndef TOOLS_H
+#define TOOLS_H
+
 // remember to malloc and free all the resources you need to use the following char* functions 
 extern char* getRetDetails(char* to, struct StackFrame *Frame); //done 
 
@@ -90,5 +93,5 @@ void* StackFrame;
 
 
 
-
+#endif
 
