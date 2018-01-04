@@ -109,7 +109,7 @@ int init_gui() {
     if (!font)
         return 1;
 
-
+    return 0;
 }
 
 int kill_gui() {
@@ -509,19 +509,19 @@ int refresh_gui(struct ParseState *Parser) {
     sfText_setCharacterSize(nextStep, 17);
     sfText_setColor(nextStep, sfBlack);
     sfText_setPosition(nextStep, nextStepPos);
-printf("\Test: 1 \n");
+printf("Test: 1 \n");
     /*File öffnen und Sourcecode in chararray speichern für Ausgabe*/
     //if(getLine(Parser)>5){
     fname = calloc(1024, sizeof(char));
-printf("\Test: 2 \n"); // SPEICHERZUGRIFFSFEHLER
+printf("Test: 2 \n"); // SPEICHERZUGRIFFSFEHLER
     strcpy(fname, getFileName(fname, Parser));
-printf("\Test: 3 \n");
+printf("Test: 3 \n");
     fname = getFileName(fname, Parser);
-printf("\Test: 4 \n");
+printf("Test: 4 \n");
     file = fopen(fname, "r");
-printf("\Test: 5 \n");
+printf("Test: 5 \n");
     sourceCode = calloc(10024, sizeof(char));
-printf("\Test: 6 \n");
+printf("Test: 6 \n");
     lineCount = 0;
     while (fgets(line, sizeof(line), file))
     {

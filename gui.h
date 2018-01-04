@@ -2,6 +2,7 @@
 #include <SFML/Graphics.h>
 
 #include "picoc.h"
+#include "tools.h"
 
 #ifndef GUI_H
 #define GUI_H

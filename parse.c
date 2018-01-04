@@ -3,6 +3,7 @@
 #include "tools.h"
 #include "interpreter.h"
 #include <stdio.h>
+#include "gui.h"
 
 
 // 0 for not output 
@@ -994,7 +995,8 @@ enum ParseResult ParseStatement(struct ParseState *Parser,
 	//lets skip the RunningMode "Skip", nothing happens here anyway
 
 #if (GUI != 0)
-	view_gui(Parser);
+	//view_gui(Parser);
+    refresh_gui(Parser);
 #endif
 
 #if (CONSOLE_OUT != 0)
@@ -1062,6 +1064,7 @@ void PicocParse(Picoc *pc, const char *FileName, const char *Source,
     /* clean up */
     if (CleanupNow)
         HeapFreeMem(pc, Tokens);
+        gui_handler();
 }
 
 /* parse interactively */
