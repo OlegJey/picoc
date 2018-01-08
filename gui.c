@@ -245,7 +245,8 @@ int kill_gui() {
 
 int refresh_gui(struct ParseState *Parser) {
 	
-
+	// Clear the screen
+	sfRenderWindow_clear(window, sfWhite); //sfColor_fromRGBA(49, 60, 72, 1.0));
 
     //STACKRFAME 1
     stackFrameText1 = getText(stackFrameText1Pos, "Stackframe 1", font, 13, sfBlack);
@@ -509,19 +510,19 @@ int refresh_gui(struct ParseState *Parser) {
     sfText_setCharacterSize(nextStep, 17);
     sfText_setColor(nextStep, sfBlack);
     sfText_setPosition(nextStep, nextStepPos);
-printf("Test: 1 \n");
+
     /*File öffnen und Sourcecode in chararray speichern für Ausgabe*/
     //if(getLine(Parser)>5){
     fname = calloc(1024, sizeof(char));
-printf("Test: 2 \n"); // SPEICHERZUGRIFFSFEHLER
+
     strcpy(fname, getFileName(fname, Parser));
-printf("Test: 3 \n");
+
     fname = getFileName(fname, Parser);
-printf("Test: 4 \n");
+
     file = fopen(fname, "r");
-printf("Test: 5 \n");
+
     sourceCode = calloc(10024, sizeof(char));
-printf("Test: 6 \n");
+
     lineCount = 0;
     while (fgets(line, sizeof(line), file))
     {
@@ -529,9 +530,9 @@ printf("Test: 6 \n");
         lineCount++;
         //printf("%s", line);
     }
-printf("\nPunkt: 7 \n");
+
     strcat(sourceCode, "\0");
-printf("\nPunkt: 8 \n");
+
     code = sfText_create();
     sfText_setString(code, sourceCode);
     sfText_setFont(code, font);
@@ -593,7 +594,55 @@ printf("\nPunkt: 8 \n");
     sfText_setColor(executedLine, sfBlack);
     sfText_setPosition(executedLine, executedLinePos);
 
-    
+       
+    if(countStackFrames(Parser) >= 1){
+        sfRenderWindow_drawRectangleShape(window, stackframe1, NULL);
+        sfRenderWindow_drawText(window, stackFrameText1, NULL);
+        sfRenderWindow_drawText(window, functionNameSF1, NULL);
+        sfRenderWindow_drawText(window, parameterCount1, NULL);
+        sfRenderWindow_drawText(window, returnType1, NULL);
+        sfRenderWindow_drawText(window, localVar1, NULL);
+        sfRenderWindow_drawText(window, returnAddress1, NULL); 
+    }
+    if(countStackFrames(Parser) >= 2){    
+        sfRenderWindow_drawRectangleShape(window, stackframe2, NULL);
+        sfRenderWindow_drawText(window, stackFrameText2, NULL);
+        sfRenderWindow_drawText(window, functionNameSF2, NULL);
+        sfRenderWindow_drawText(window, parameterCount2, NULL);
+        sfRenderWindow_drawText(window, returnType2, NULL);
+        sfRenderWindow_drawText(window, localVar2, NULL);
+        sfRenderWindow_drawText(window, returnAddress2, NULL); 
+    }
+    if(countStackFrames(Parser) >= 3){    
+        sfRenderWindow_drawRectangleShape(window, stackframe3, NULL);
+        sfRenderWindow_drawText(window, stackFrameText3, NULL);
+        sfRenderWindow_drawText(window, functionNameSF3, NULL);
+        sfRenderWindow_drawText(window, parameterCount3, NULL);
+        sfRenderWindow_drawText(window, returnType3, NULL);
+        sfRenderWindow_drawText(window, localVar3, NULL);
+        sfRenderWindow_drawText(window, returnAddress3, NULL); 
+    }
+/*     if(countStackFrames(Parser) >= 4){    
+        sfRenderWindow_drawRectangleShape(window, stackframe4, NULL);
+        sfRenderWindow_drawText(window, stackFrameText4, NULL);
+        sfRenderWindow_drawText(window, functionNameSF4, NULL);
+        sfRenderWindow_drawText(window, parameterCount4, NULL);
+        sfRenderWindow_drawText(window, returnType4, NULL);
+        sfRenderWindow_drawText(window, localVar4, NULL);
+        sfRenderWindow_drawText(window, returnAddress4, NULL); 
+    }
+    if(countStackFrames(Parser) >= 5){    
+        sfRenderWindow_drawRectangleShape(window, stackframe5, NULL);
+        sfRenderWindow_drawText(window, stackFrameText5, NULL);
+        sfRenderWindow_drawText(window, functionNameSF5, NULL);
+        sfRenderWindow_drawText(window, parameterCount5, NULL);
+        sfRenderWindow_drawText(window, returnType5, NULL);
+        sfRenderWindow_drawText(window, localVar5, NULL);
+        sfRenderWindow_drawText(window, returnAddress5, NULL);  
+    }*/
+            
+
+
 
     // Start the game loop
     while (sfRenderWindow_isOpen(window))
@@ -610,7 +659,7 @@ printf("\nPunkt: 8 \n");
                 if (event.key.code == sfKeySpace)
                 {
                     printf("Space pressed! \n");
-                    sfRenderWindow_close(window);
+                    goto breakloop;
                 }
                 // Move displayed source code up or down with arrow keys
                 else if (event.key.code == sfKeyUp)
@@ -631,80 +680,29 @@ printf("\nPunkt: 8 \n");
                 }
             }
         }
-
-
-
-        
-        if(countStackFrames(Parser) >= 1){
-            sfRenderWindow_drawRectangleShape(window, stackframe1, NULL);
-            sfRenderWindow_drawText(window, stackFrameText1, NULL);
-            sfRenderWindow_drawText(window, functionNameSF1, NULL);
-            sfRenderWindow_drawText(window, parameterCount1, NULL);
-            sfRenderWindow_drawText(window, returnType1, NULL);
-            sfRenderWindow_drawText(window, localVar1, NULL);
-            sfRenderWindow_drawText(window, returnAddress1, NULL); 
-        }
-        if(countStackFrames(Parser) >= 2){    
-            sfRenderWindow_drawRectangleShape(window, stackframe2, NULL);
-            sfRenderWindow_drawText(window, stackFrameText2, NULL);
-            sfRenderWindow_drawText(window, functionNameSF2, NULL);
-            sfRenderWindow_drawText(window, parameterCount2, NULL);
-            sfRenderWindow_drawText(window, returnType2, NULL);
-            sfRenderWindow_drawText(window, localVar2, NULL);
-            sfRenderWindow_drawText(window, returnAddress2, NULL); 
-        }
-        if(countStackFrames(Parser) >= 3){    
-            sfRenderWindow_drawRectangleShape(window, stackframe3, NULL);
-            sfRenderWindow_drawText(window, stackFrameText3, NULL);
-            sfRenderWindow_drawText(window, functionNameSF3, NULL);
-            sfRenderWindow_drawText(window, parameterCount3, NULL);
-            sfRenderWindow_drawText(window, returnType3, NULL);
-            sfRenderWindow_drawText(window, localVar3, NULL);
-            sfRenderWindow_drawText(window, returnAddress3, NULL); 
-        }
- /*     if(countStackFrames(Parser) >= 4){    
-            sfRenderWindow_drawRectangleShape(window, stackframe4, NULL);
-            sfRenderWindow_drawText(window, stackFrameText4, NULL);
-            sfRenderWindow_drawText(window, functionNameSF4, NULL);
-            sfRenderWindow_drawText(window, parameterCount4, NULL);
-            sfRenderWindow_drawText(window, returnType4, NULL);
-            sfRenderWindow_drawText(window, localVar4, NULL);
-            sfRenderWindow_drawText(window, returnAddress4, NULL); 
-        }
-        if(countStackFrames(Parser) >= 5){    
-            sfRenderWindow_drawRectangleShape(window, stackframe5, NULL);
-            sfRenderWindow_drawText(window, stackFrameText5, NULL);
-            sfRenderWindow_drawText(window, functionNameSF5, NULL);
-            sfRenderWindow_drawText(window, parameterCount5, NULL);
-            sfRenderWindow_drawText(window, returnType5, NULL);
-            sfRenderWindow_drawText(window, localVar5, NULL);
-            sfRenderWindow_drawText(window, returnAddress5, NULL);  
-        }*/
-            
-
-
-		// Clear the screen
-		sfRenderWindow_clear(window, sfWhite); //sfColor_fromRGBA(49, 60, 72, 1.0));
-
-		// Draw the sprite
-		//sfRenderWindow_drawSprite(window, sprite, NULL);
-
-		sfRenderWindow_drawRectangleShape(window, infoBlock, NULL);
-
-
-		// Draw the text
-		sfRenderWindow_drawText(window, nextStep, NULL);
-		sfRenderWindow_drawText(window, code, NULL);
-		sfRenderWindow_drawText(window, fileName, NULL);
-		sfRenderWindow_drawText(window, runningMode, NULL);
-		sfRenderWindow_drawText(window, executedLine, NULL);
-		sfRenderWindow_drawText(window, lineNumbers, NULL);
-	   
-
-		// Update the window
-		sfRenderWindow_display(window);
-
 	}
+	breakloop:
+	printf("test\n");
+     
+
+	// Clear the screen
+	sfRenderWindow_clear(window, sfWhite); //sfColor_fromRGBA(49, 60, 72, 1.0));
+
+	// Draw the sprite
+	//sfRenderWindow_drawSprite(window, sprite, NULL);
+
+	sfRenderWindow_drawRectangleShape(window, infoBlock, NULL);
+
+	// Draw the text
+	sfRenderWindow_drawText(window, nextStep, NULL);
+	sfRenderWindow_drawText(window, code, NULL);
+	sfRenderWindow_drawText(window, fileName, NULL);
+	sfRenderWindow_drawText(window, runningMode, NULL);
+	sfRenderWindow_drawText(window, executedLine, NULL);
+	sfRenderWindow_drawText(window, lineNumbers, NULL);
+	   
+	// Update the window
+	sfRenderWindow_display(window);
 
 	return 0;
 }

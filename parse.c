@@ -7,7 +7,7 @@
 
 
 // 0 for not output 
-#define CONSOLE_OUT 1
+#define CONSOLE_OUT 0
 #define GUI 1
 
 static enum ParseResult ParseStatementMaybeRun(struct ParseState *Parser,
@@ -1062,9 +1062,10 @@ void PicocParse(Picoc *pc, const char *FileName, const char *Source,
         ProgramFail(&Parser, "parse error");
 
     /* clean up */
-    if (CleanupNow)
+    if (CleanupNow) {
         HeapFreeMem(pc, Tokens);
         gui_handler();
+	}
 }
 
 /* parse interactively */
