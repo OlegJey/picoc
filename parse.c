@@ -7,8 +7,8 @@
 
 
 // 0 for not output 
-#define CONSOLE_OUT 0
-#define GUI 1
+#define CONSOLE_OUT 1
+#define GUI 0
 
 static enum ParseResult ParseStatementMaybeRun(struct ParseState *Parser,
         int Condition, int CheckTrailingSemicolon);
@@ -1064,7 +1064,10 @@ void PicocParse(Picoc *pc, const char *FileName, const char *Source,
     /* clean up */
     if (CleanupNow) {
         HeapFreeMem(pc, Tokens);
+
+	#if (GUI != 0)
         gui_handler();
+	#endif
 	}
 }
 
