@@ -1,6 +1,6 @@
  1. Informationen aus HashTable bekommen und in tools bereitstellen //erfüllt für Lokale Werte
 
- 2. Gui-Fenster nicht mehrfach erstellen und schließen
+ 2. Gui-Fenster nicht mehrfach erstellen und schließen	// done
 
  3. Hervorheben der ausgeführten Zeile
 
