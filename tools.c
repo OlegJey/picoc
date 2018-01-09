@@ -390,15 +390,15 @@ struct StackFrame* get_TopStackFrame(struct ParseState *Parser){
 
 }
 
-struct StackFrame* get_PreviousStackFrame(struct ParseState *Parser){
+struct StackFrame* get_PreviousStackFrame(struct StackFrame *Frame){
 	
 	struct StackFrame *Previous = NULL; 	
-		if(Parser->pc->TopStackFrame)
+		if(Frame != NULL)
 		{
 			
-			if(Parser->pc->TopStackFrame->PreviousStackFrame)
+			if(Frame->PreviousStackFrame != NULL)
 			{
-				Previous = Parser->pc->TopStackFrame->PreviousStackFrame;
+				Previous = Frame->PreviousStackFrame;
 			}
 	
 		}
