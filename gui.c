@@ -329,7 +329,7 @@ int refresh_gui(struct ParseState *Parser) {
 }
 
 
-
+//Frame 1
 	paramCount1 = calloc(1024, sizeof(char));
 	paramBuffer1 = calloc(1024, sizeof(char));
 
@@ -352,110 +352,127 @@ int refresh_gui(struct ParseState *Parser) {
 
    //Amount Parameter
     strcpy(paramCount1, "Anzahl Parameter: ");
-    getNumParamAsString(paramBuffer1, current); 
+    getNumParamAsString(paramBuffer1, frames[0]); 
     strcat(paramCount1, paramBuffer1);
     parameterCount1 = getText(parameterCountPos1, paramCount1, font, 13, sfBlack);
 
 
 	//Return shit  
-    getRetDetails(currentReturnType1, current);
+    getRetDetails(currentReturnType1,frames[0]);
     returnType1 = getText(returnTypePos1, currentReturnType1, font, 13, sfBlack);
 
 
     //Local Data
     strcpy(currentlocalVar1, "Lokale Variablen: ");
-    getLocalVarAndVal(localVarBuffer1, current);
+    getLocalVarAndVal(localVarBuffer1, frames[0]);
     strcat(currentlocalVar1, localVarBuffer1);
     localVar1 = getText(localVarPos1, currentlocalVar1, font, 13, sfBlack);
 
 
-    //STACKFRAME 2
-    /*funcNameSF2 = calloc(1024, sizeof(char));
-    strcpy(funcNameSF2, "Funktionsname: ");
-    funcNameBuffer2 = calloc(1024, sizeof(char));
-    if (Parser->pc->TopStackFrame)
-        getFuncName(funcNameBuffer2, get_StackFrame(Parser)); //Parser->pc->TopStackFrame);
-    strcat(funcNameSF2, funcNameBuffer2); 
-    */
 
-    paramCount2 = calloc(1024, sizeof(char));
+
+
+
+//Frame 2
+	paramCount2 = calloc(1024, sizeof(char));
+	paramBuffer2 = calloc(1024, sizeof(char));
+
+	currentlocalVar2 = calloc(1024, sizeof(char));
+	localVarBuffer2 = calloc(1024, sizeof(char));
+	
+	currentReturnType2 = calloc(1024, sizeof(char));
+	
+	funcNameSF2 = calloc(1024, sizeof(char));
+	funcNameBuffer2 = calloc(1024, sizeof(char));
+  
+
+		
+	//Name
+	strcpy(funcNameSF2,"Function name: ");
+	getFuncName(funcNameBuffer2, frames[1]);
+	strcat(funcNameSF2, funcNameBuffer2);
+	functionNameSF2 = getText(functionNameSF2Pos, funcNameSF2, font, 13, sfBlack);
+	
+
+   //Amount Parameter
     strcpy(paramCount2, "Anzahl Parameter: ");
-    paramBuffer2 = calloc(1024, sizeof(char));
-    if (Parser->pc->TopStackFrame)
-        getNumParamAsString(paramBuffer2, get_StackFrame(Parser)); //Parser->pc->TopStackFrame);
+    getNumParamAsString(paramBuffer2, frames[1]); 
     strcat(paramCount2, paramBuffer2);
-    sfText *parameterCount2 = getText(parameterCountPos2, paramCount2, font, 13, sfBlack);
+    parameterCount2 = getText(parameterCountPos2, paramCount2, font, 13, sfBlack);
 
- 
-    currentReturnType2 = calloc(1024, sizeof(char));
-    strcpy(currentReturnType2, "Rueckgabetyp: ");
-    returnTypeBuffer2 = calloc(1024, sizeof(char));
 
-    if (Parser->pc->TopStackFrame)
-        getRetDetails(returnTypeBuffer2, Parser->pc->TopStackFrame);
-    strcat(currentReturnType2, returnTypeBuffer2);
-    returnType2 = getText(returnTypePos2, currentReturnType1, font, 13, sfBlack);
+	//Return shit  
+    getRetDetails(currentReturnType2, frames[1]);
+    returnType2 = getText(returnTypePos2, currentReturnType2, font, 13, sfBlack);
 
-    currentlocalVar2 = calloc(1024, sizeof(char));
+
+    //Local Data
     strcpy(currentlocalVar2, "Lokale Variablen: ");
-    localVarBuffer2 = calloc(1024, sizeof(char));
-
-    if (Parser->pc->TopStackFrame)
-        getLocalVarAndVal(localVarBuffer2, Parser->pc->TopStackFrame);
+    getLocalVarAndVal(localVarBuffer2, frames[1]);
     strcat(currentlocalVar2, localVarBuffer2);
     localVar2 = getText(localVarPos2, currentlocalVar2, font, 13, sfBlack);
 
-    currentreturnAddress2 = calloc(1024, sizeof(char));
-    strcpy(currentreturnAddress2, "Returndetails: ");
-    currentAddressBuffer2 = calloc(1024, sizeof(char));
 
-    if (Parser->pc->TopStackFrame)
-        getRetDetails(currentAddressBuffer2, Parser->pc->TopStackFrame);
-    strcat(currentreturnAddress2, currentAddressBuffer2);
-    sfText *returnAddress2 = getText(returnAddressPos2, currentreturnAddress2, font, 13, sfBlack);
 
-    //STACKFRAME 3
-/*     funcNameSF3 = calloc(1024, sizeof(char));
-    strcpy(funcNameSF3, "Funktionsname: ");
-    funcNameBuffer3 = calloc(1024, sizeof(char));
-    if (Parser->pc->TopStackFrame)
-        getFuncName(funcNameBuffer3, get_StackFrame(Parser)); //Parser->pc->TopStackFrame);
-    strcat(funcNameSF3, funcNameBuffer3); */
-    
-    paramCount3 = calloc(1024, sizeof(char));
+
+
+
+
+
+
+
+
+//Frame 3
+	paramCount3 = calloc(1024, sizeof(char));
+	paramBuffer3 = calloc(1024, sizeof(char));
+
+	currentlocalVar3 = calloc(1024, sizeof(char));
+	localVarBuffer3 = calloc(1024, sizeof(char));
+	
+	currentReturnType3 = calloc(1024, sizeof(char));
+	
+	funcNameSF3 = calloc(1024, sizeof(char));
+	funcNameBuffer3 = calloc(1024, sizeof(char));
+  
+
+		
+	//Name
+	strcpy(funcNameSF3,"Function name: ");
+	getFuncName(funcNameBuffer3, frames[2]);
+	strcat(funcNameSF3, funcNameBuffer3);
+	functionNameSF3 = getText(functionNameSF3Pos, funcNameSF3, font, 13, sfBlack);
+	
+
+   //Amount Parameter
     strcpy(paramCount3, "Anzahl Parameter: ");
-    paramBuffer3 = calloc(1024, sizeof(char));
-    if (Parser->pc->TopStackFrame)
-        getNumParamAsString(paramBuffer3, get_StackFrame(Parser)); //Parser->pc->TopStackFrame);
+    getNumParamAsString(paramBuffer3, frames[2]); 
     strcat(paramCount3, paramBuffer3);
     parameterCount3 = getText(parameterCountPos3, paramCount3, font, 13, sfBlack);
 
-    currentReturnType3 = calloc(1024, sizeof(char));
-    strcpy(currentReturnType3, "Rueckgabetyp: ");
-    returnTypeBuffer3 = calloc(1024, sizeof(char));
 
-    if (Parser->pc->TopStackFrame)
-        getRetDetails(returnTypeBuffer3, Parser->pc->TopStackFrame);
-    strcat(currentReturnType3, returnTypeBuffer3);
+	//Return shit  
+    getRetDetails(currentReturnType3, frames[2]);
     returnType3 = getText(returnTypePos3, currentReturnType3, font, 13, sfBlack);
 
-    currentlocalVar3 = calloc(1024, sizeof(char));
-    strcpy(currentlocalVar3, "Lokale Variablen: ");
-    localVarBuffer3 = calloc(1024, sizeof(char));
 
-    if (Parser->pc->TopStackFrame)
-        getLocalVarAndVal(localVarBuffer3, Parser->pc->TopStackFrame);
+    //Local Data
+    strcpy(currentlocalVar3, "Lokale Variablen: ");
+    getLocalVarAndVal(localVarBuffer3, frames[2]);
     strcat(currentlocalVar3, localVarBuffer3);
     localVar3 = getText(localVarPos3, currentlocalVar3, font, 13, sfBlack);
 
-    currentreturnAddress3 = calloc(1024, sizeof(char));
-    strcpy(currentreturnAddress3, "Returndetails: ");
-    currentAddressBuffer3 = calloc(1024, sizeof(char));
 
-    if (Parser->pc->TopStackFrame)
-        getRetDetails(currentAddressBuffer3, Parser->pc->TopStackFrame);
-    strcat(currentreturnAddress3, currentAddressBuffer3);
-    returnAddress3 = getText(returnAddressPos3, currentreturnAddress3, font, 13, sfBlack);
+
+
+
+
+
+
+
+
+
+
+
 
     //STACKFRAME 4
 /*    stackFrameText4 = getText(stackFrameText4Pos, "Stackframe 4", font, 13, sfBlack);
