@@ -145,7 +145,7 @@ int init_gui() {
 
     stackFrameText1 = getText(stackFrameText1Pos, "Stackframe 1", font, 13, sfBlack);
     functionNameSF1Pos = getVector(802, 137);
-    functionNameSF1 = getText(functionNameSF1Pos, "Funktionsname: ", font, 13, sfBlack); 
+    //functionNameSF1 = getText(functionNameSF1Pos, "Funktionsname: ", font, 13, sfBlack); 
     parameterCountPos1 = getVector(802, 153);
     returnTypePos1 = getVector(802, 169);
     localVarPos1 = getVector(802, 185);
@@ -154,7 +154,7 @@ int init_gui() {
 	// Stackframe 2
 	stackFrameText2 = getText(stackFrameText2Pos, "Stackframe 2", font, 13, sfBlack);
     functionNameSF2Pos = getVector(802, 237);
-    functionNameSF2 = getText(functionNameSF2Pos, "Funktionsname: ", font, 13, sfBlack); //Speicherzugriffsfehler
+    //functionNameSF2 = getText(functionNameSF2Pos, "Funktionsname: ", font, 13, sfBlack); //Speicherzugriffsfehler
     parameterCountPos2 = getVector(802, 253);
 	returnTypePos2 = getVector(802, 269);
     localVarPos2 = getVector(802, 285);
@@ -163,7 +163,7 @@ int init_gui() {
 	// Stackframe 3	
 	stackFrameText3 = getText(stackFrameText3Pos, "Stackframe 3", font, 13, sfBlack);
     functionNameSF3Pos = getVector(802, 337);
-	functionNameSF3 = getText(functionNameSF3Pos, "Funktionsname: ", font, 13, sfBlack); //Speicherzugriffsfehler
+	//functionNameSF3 = getText(functionNameSF3Pos, "Funktionsname: ", font, 13, sfBlack); //Speicherzugriffsfehler
     parameterCountPos3 = getVector(802, 353);
     returnTypePos3 = getVector(802, 369);
     localVarPos3 = getVector(802, 385);
@@ -315,61 +315,56 @@ int kill_gui() {
 
 int refresh_gui(struct ParseState *Parser) {
 
-    //STACKRFAME 1
 
-   /*  funcNameSF1 = calloc(1024, sizeof(char));     //Speicherzugriffsfehler
-    strcpy(funcNameSF1, "Funktionsname: ");
-    funcNameBuffer1 = calloc(1024, sizeof(char));
-    if (Parser->pc->TopStackFrame)
-        getFuncName(funcNameBuffer1, get_StackFrame(Parser)); //Parser->pc->TopStackFrame);
-    strcat(funcNameSF1, funcNameBuffer1); */
+	struct StackFrame* current = get_TopStackFrame(Parser);
 
-    paramCount1 = calloc(1024, sizeof(char));
+	paramCount1 = calloc(1024, sizeof(char));
+	paramBuffer1 = calloc(1024, sizeof(char));
+
+	currentlocalVar1 = calloc(1024, sizeof(char));
+	localVarBuffer1 = calloc(1024, sizeof(char));
+	
+	currentReturnType1 = calloc(1024, sizeof(char));
+	
+	funcNameSF1 = calloc(1024, sizeof(char));
+	funcNameBuffer1 = calloc(1024, sizeof(char));
+  
+
+		
+	//Name
+	strcpy(funcNameSF1,"Function name: ");
+	getFuncName(funcNameBuffer1, current);
+	strcat(funcNameSF1, funcNameBuffer1);
+	functionNameSF1 = getText(functionNameSF1Pos, funcNameSF1, font, 13, sfBlack);
+	
+
+   //Amount Parameter
     strcpy(paramCount1, "Anzahl Parameter: ");
-    paramBuffer1 = calloc(1024, sizeof(char));
-    if (Parser->pc->TopStackFrame)
-        getNumParamAsString(paramBuffer1, get_StackFrame(Parser)); //Parser->pc->TopStackFrame);
+    getNumParamAsString(paramBuffer1, current); //Parser->pc->TopStackFrame);
     strcat(paramCount1, paramBuffer1);
     parameterCount1 = getText(parameterCountPos1, paramCount1, font, 13, sfBlack);
 
 
-    currentReturnType1 = calloc(1024, sizeof(char));
-    strcpy(currentReturnType1, "Rueckgabetyp: ");
-    returnTypeBuffer1 = calloc(1024, sizeof(char));
-
-    if (Parser->pc->TopStackFrame)
-        getRetDetails(returnTypeBuffer1, Parser->pc->TopStackFrame);
-    strcat(currentReturnType1, returnTypeBuffer1);
+	//Return shit  
+    getRetDetails(currentReturnType1, current);
     returnType1 = getText(returnTypePos1, currentReturnType1, font, 13, sfBlack);
 
 
-    currentlocalVar1 = calloc(1024, sizeof(char));
+    //Local Data
     strcpy(currentlocalVar1, "Lokale Variablen: ");
-    localVarBuffer1 = calloc(1024, sizeof(char));
-
-    if (Parser->pc->TopStackFrame)
-        getLocalVarAndVal(localVarBuffer1, Parser->pc->TopStackFrame);
+    getLocalVarAndVal(localVarBuffer1, current);
     strcat(currentlocalVar1, localVarBuffer1);
     localVar1 = getText(localVarPos1, currentlocalVar1, font, 13, sfBlack);
 
 
-    currentreturnAddress1 = calloc(1024, sizeof(char));
-    strcpy(currentreturnAddress1, "Returndetails: ");
-    currentAddressBuffer1 = calloc(1024, sizeof(char));
-
-    if (Parser->pc->TopStackFrame)
-        getRetDetails(currentAddressBuffer1, Parser->pc->TopStackFrame);
-    strcat(currentreturnAddress1, currentAddressBuffer1);
-    returnAddress1 = getText(returnAddressPos1, currentreturnAddress1, font, 13, sfBlack);
-
     //STACKFRAME 2
-/*     funcNameSF2 = calloc(1024, sizeof(char));
+    /*funcNameSF2 = calloc(1024, sizeof(char));
     strcpy(funcNameSF2, "Funktionsname: ");
     funcNameBuffer2 = calloc(1024, sizeof(char));
     if (Parser->pc->TopStackFrame)
         getFuncName(funcNameBuffer2, get_StackFrame(Parser)); //Parser->pc->TopStackFrame);
-    strcat(funcNameSF2, funcNameBuffer2); */
-    
+    strcat(funcNameSF2, funcNameBuffer2); 
+    */
 
     paramCount2 = calloc(1024, sizeof(char));
     strcpy(paramCount2, "Anzahl Parameter: ");
@@ -623,9 +618,10 @@ int refresh_gui(struct ParseState *Parser) {
         sfRenderWindow_drawText(window, stackFrameText1, NULL);
         sfRenderWindow_drawText(window, functionNameSF1, NULL);
         sfRenderWindow_drawText(window, parameterCount1, NULL);
-        sfRenderWindow_drawText(window, returnType1, NULL);
-        sfRenderWindow_drawText(window, localVar1, NULL);
-        sfRenderWindow_drawText(window, returnAddress1, NULL); 
+		sfRenderWindow_drawText(window, localVar1, NULL);        
+		sfRenderWindow_drawText(window, returnType1, NULL);
+        
+         
     }
     if(countStackFrames(Parser) >= 2){    
         sfRenderWindow_drawRectangleShape(window, stackframe2, NULL);

@@ -374,7 +374,7 @@ void* get_HeapStackTop(struct ParseState *Parser){
 
 void* get_StackFrame(struct ParseState *Parser){
 
-	if(Parser->pc)
+	if(Parser->pc->TopStackFrame != NULL)
 		return Parser->pc->StackFrame;
 	  else return NULL;
 
@@ -384,8 +384,8 @@ struct StackFrame* get_TopStackFrame(struct ParseState *Parser){
 	
 	struct StackFrame *ret;
 
-	if(Parser->pc->TopStackFrame) ret = Parser->pc->TopStackFrame; 
-	
+	if(Parser->pc->TopStackFrame != NULL) ret = Parser->pc->TopStackFrame; 
+		else ret = NULL;
 	return ret;
 
 }

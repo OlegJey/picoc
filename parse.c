@@ -7,8 +7,8 @@
 
 
 // 0 for not output 
-#define CONSOLE_OUT 1
-#define GUI 0
+#define CONSOLE_OUT 0
+#define GUI 1
 
 static enum ParseResult ParseStatementMaybeRun(struct ParseState *Parser,
         int Condition, int CheckTrailingSemicolon);
@@ -49,7 +49,8 @@ void View(struct ParseState *Parser){
 	char* mode = malloc(sizeof(char)*1024);
 	char* local = malloc(sizeof(char)*1024);
 	char* retDet = malloc(sizeof(char)*1024);
-	
+	char* funName = malloc(sizeof(char)*1024);
+
 	system("clear");
 
 	printf("++++++++Basic Informations+++++++\n\n");
@@ -62,9 +63,12 @@ void View(struct ParseState *Parser){
 	
 
 	printf("++++++++Function Informations+++++++\n\n");
+	getFuncName(funName,Parser->pc->TopStackFrame);
 	if(Parser->pc->TopStackFrame){
-		printf("Name of the function we are in:\t\t\t%s\n\n",
-		Parser->pc->TopStackFrame->FuncName);
+		
+				
+		printf("Name of the function we are in:\t\t\t%s\n\n", funName);
+		
 		
 		printf("Number of parameters of the function we are in: %d\n",
 		Parser->pc->TopStackFrame->NumParams);
@@ -109,6 +113,7 @@ void View(struct ParseState *Parser){
 	free(mode);
 	free(local);
 	free(retDet);
+	free(funName);
 	
 }
 #endif
