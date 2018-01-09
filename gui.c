@@ -318,6 +318,18 @@ int refresh_gui(struct ParseState *Parser) {
 
 	struct StackFrame* current = get_TopStackFrame(Parser);
 
+	struct StackFrame* frames[5];
+
+
+	for(int i = 0; i < 5; i++){
+	
+	frames[0] = current;
+	current = get_PreviousStackFrame(current);
+
+}
+
+
+
 	paramCount1 = calloc(1024, sizeof(char));
 	paramBuffer1 = calloc(1024, sizeof(char));
 
@@ -333,26 +345,26 @@ int refresh_gui(struct ParseState *Parser) {
 		
 	//Name
 	strcpy(funcNameSF1,"Function name: ");
-	getFuncName(funcNameBuffer1, current);
+	getFuncName(funcNameBuffer1, frame1);
 	strcat(funcNameSF1, funcNameBuffer1);
 	functionNameSF1 = getText(functionNameSF1Pos, funcNameSF1, font, 13, sfBlack);
 	
 
    //Amount Parameter
     strcpy(paramCount1, "Anzahl Parameter: ");
-    getNumParamAsString(paramBuffer1, current); //Parser->pc->TopStackFrame);
+    getNumParamAsString(paramBuffer1, frame1); 
     strcat(paramCount1, paramBuffer1);
     parameterCount1 = getText(parameterCountPos1, paramCount1, font, 13, sfBlack);
 
 
 	//Return shit  
-    getRetDetails(currentReturnType1, current);
+    getRetDetails(currentReturnType1, frame1);
     returnType1 = getText(returnTypePos1, currentReturnType1, font, 13, sfBlack);
 
 
     //Local Data
     strcpy(currentlocalVar1, "Lokale Variablen: ");
-    getLocalVarAndVal(localVarBuffer1, current);
+    getLocalVarAndVal(localVarBuffer1, frame1);
     strcat(currentlocalVar1, localVarBuffer1);
     localVar1 = getText(localVarPos1, currentlocalVar1, font, 13, sfBlack);
 
