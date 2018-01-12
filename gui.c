@@ -198,52 +198,6 @@ int init_gui()
     sfText_setColor(executedLine, sfBlack);
     sfText_setPosition(executedLine, executedLinePos);
 
-    stackFrameText1Pos = getVector(602, 121);
-    stackFrameText2Pos = getVector(602, 221);
-    stackFrameText3Pos = getVector(602, 321);
-    stackFrameText4Pos = getVector(602, 421);
-    stackFrameText5Pos = getVector(602, 521);
-    // Stackframe 1
-
-    stackFrameText1 = getText(stackFrameText1Pos, "Stackframe 1", font, 13, sfBlack);
-    functionNameSF1Pos = getVector(602, 137);
-    parameterCountPos1 = getVector(602, 153);
-    returnTypePos1 = getVector(602, 169);
-    localVarPos1 = getVector(602, 185);
-    returnAddressPos1 = getVector(602, 201);
-
-    // Stackframe 2
-    stackFrameText2 = getText(stackFrameText2Pos, "Stackframe 2", font, 13, sfBlack);
-    functionNameSF2Pos = getVector(602, 237);
-    parameterCountPos2 = getVector(602, 253);
-    returnTypePos2 = getVector(602, 269);
-    localVarPos2 = getVector(602, 285);
-    returnAddressPos2 = getVector(602, 301);
-
-    // Stackframe 3
-    stackFrameText3 = getText(stackFrameText3Pos, "Stackframe 3", font, 13, sfBlack);
-    functionNameSF3Pos = getVector(602, 337);
-    parameterCountPos3 = getVector(602, 353);
-    returnTypePos3 = getVector(602, 369);
-    localVarPos3 = getVector(602, 385);
-    returnAddressPos3 = getVector(602, 401);
-
-    // Stackframe 4
-    stackFrameText4 = getText(stackFrameText4Pos, "Stackframe 4", font, 13, sfBlack);
-    functionNameSF4Pos = getVector(602, 437);
-    parameterCountPos4 = getVector(602, 453);
-    returnTypePos4 = getVector(602, 469);
-    localVarPos4 = getVector(602, 485);
-    returnAddressPos4 = getVector(602, 501);
-
-    // Stackframe 5
-    stackFrameText5 = getText(stackFrameText5Pos, "Stackframe 5", font, 13, sfBlack);
-    functionNameSF5Pos = getVector(602, 537);
-    parameterCountPos5 = getVector(602, 553);
-    returnTypePos5 = getVector(602, 569);
-    localVarPos5 = getVector(602, 585);
-    returnAddressPos5 = getVector(602, 501);
-
     return 0;
 }
 
@@ -387,40 +341,45 @@ int refresh_gui(struct ParseState *Parser)
 
     
     // //Frame 1
+    stackFrameText1 = getText(getVector(602, 121), "Stackframe 1", font, 13, sfBlack);
     struct StackFrameTexts *block1 = getStackFrameTexts(frames[0]);
-    functionNameSF1 = getText(functionNameSF1Pos, block1->funcName, font, 13, sfBlack);
-    parameterCount1 = getText(parameterCountPos1, block1->paramCount, font, 13, sfBlack);
-    returnType1 = getText(returnTypePos1, block1->currentReturnDetail, font, 13, sfBlack);
-    localVar1 = getText(localVarPos1, block1->currentLocalVar, font, 13, sfBlack);
+    functionNameSF1 = getText(getVector(602, 137), block1->funcName, font, 13, sfBlack);
+    parameterCount1 = getText(getVector(602, 153), block1->paramCount, font, 13, sfBlack);
+    returnType1 = getText(getVector(602, 169), block1->currentReturnDetail, font, 13, sfBlack);
+    localVar1 = getText(getVector(602, 185), block1->currentLocalVar, font, 13, sfBlack);
 
     //Frame 2
+     stackFrameText2 = getText(getVector(602, 221), "Stackframe 2", font, 13, sfBlack);
     struct StackFrameTexts *block2 = getStackFrameTexts(frames[1]);
-    functionNameSF2 = getText(functionNameSF2Pos, block2->funcName, font, 13, sfBlack);
-    parameterCount2 = getText(parameterCountPos2, block2->paramCount, font, 13, sfBlack);
-    returnType2 = getText(returnTypePos2, block2->currentReturnDetail, font, 13, sfBlack);
-    localVar2 = getText(localVarPos2, block2->currentLocalVar, font, 13, sfBlack);
+    functionNameSF2 = getText(getVector(602, 237), block2->funcName, font, 13, sfBlack);
+    parameterCount2 = getText(getVector(602, 253), block2->paramCount, font, 13, sfBlack);
+    returnType2 = getText(getVector(602, 269), block2->currentReturnDetail, font, 13, sfBlack);
+    localVar2 = getText(getVector(602, 285), block2->currentLocalVar, font, 13, sfBlack);
    
 
     //Frame 3
+    stackFrameText3 = getText(getVector(602, 321), "Stackframe 3", font, 13, sfBlack);
     struct StackFrameTexts *block3 = getStackFrameTexts(frames[2]);
-    functionNameSF3 = getText(functionNameSF3Pos, block3->funcName, font, 13, sfBlack);
-    parameterCount3 = getText(parameterCountPos3, block3->paramCount, font, 13, sfBlack);
-    returnType3 = getText(returnTypePos3, block3->currentReturnDetail, font, 13, sfBlack);
-    localVar3 = getText(localVarPos3, block3->currentLocalVar, font, 13, sfBlack);
+    functionNameSF3 = getText(getVector(602, 337), block3->funcName, font, 13, sfBlack);
+    parameterCount3 = getText(getVector(602, 353), block3->paramCount, font, 13, sfBlack);
+    returnType3 = getText(getVector(602, 369), block3->currentReturnDetail, font, 13, sfBlack);
+    localVar3 = getText(getVector(602, 385), block3->currentLocalVar, font, 13, sfBlack);
    
     //STACKFRAME 4
+    stackFrameText4 = getText(getVector(602, 421), "Stackframe 4", font, 13, sfBlack);
     struct StackFrameTexts *block4 = getStackFrameTexts(frames[3]);
-    functionNameSF4 = getText(functionNameSF4Pos, block4->funcName, font, 13, sfBlack);
-    parameterCount4 = getText(parameterCountPos4, block4->paramCount, font, 13, sfBlack);
-    returnType4 = getText(returnTypePos4, block4->currentReturnDetail, font, 13, sfBlack);
-    localVar4 = getText(localVarPos4, block4->currentLocalVar, font, 13, sfBlack);
+    functionNameSF4 = getText(getVector(602, 437), block4->funcName, font, 13, sfBlack);
+    parameterCount4 = getText(getVector(602, 453), block4->paramCount, font, 13, sfBlack);
+    returnType4 = getText(getVector(602, 469), block4->currentReturnDetail, font, 13, sfBlack);
+    localVar4 = getText(getVector(602, 485), block4->currentLocalVar, font, 13, sfBlack);
    
     //STACKFRAME 5
+    stackFrameText5 = getText(getVector(602, 521), "Stackframe 5", font, 13, sfBlack);
     struct StackFrameTexts *block5 = getStackFrameTexts(frames[4]);
-    functionNameSF5 = getText(functionNameSF5Pos, block5->funcName, font, 13, sfBlack);
-    parameterCount5 = getText(parameterCountPos5, block5->paramCount, font, 13, sfBlack);
-    returnType5 = getText(returnTypePos5, block5->currentReturnDetail, font, 13, sfBlack);
-    localVar5 = getText(localVarPos5, block5->currentLocalVar, font, 13, sfBlack);
+    functionNameSF5 = getText(getVector(602, 537), block5->funcName, font, 13, sfBlack);
+    parameterCount5 = getText(getVector(602, 553), block5->paramCount, font, 13, sfBlack);
+    returnType5 = getText(getVector(602, 569), block5->currentReturnDetail, font, 13, sfBlack);
+    localVar5 = getText(getVector(602, 501), block5->currentLocalVar, font, 13, sfBlack);
    
     
 
