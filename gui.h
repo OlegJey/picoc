@@ -13,6 +13,14 @@ extern int init_gui();
 extern int refresh_gui(struct ParseState *Parser);
 extern int kill_gui();
 extern sfText *getText(sfVector2f pos, char *string, sfFont *font, int size, sfColor color);
+extern sfRectangleShape *getRectangleShape(sfVector2f size, sfVector2f pos, sfColor fillColor, sfColor outlineColor, float thickness);
+
+struct StackFrameTexts{
+    char *paramCount;
+    char *currentLocalVar;
+    char *currentReturnDetail;
+    char *funcName;    
+};
 
 sfRenderWindow* window;
 sfVideoMode vmode;
@@ -43,20 +51,20 @@ sfRectangleShape *infoBlock;
 sfVector2f infoBlockSize;
 sfVector2f infoBlockPos;
 
-sfRectangleShape *stackframe1;
+sfRectangleShape *stackframeBox1;
 sfVector2f stackframe1Size;
 sfVector2f stackframe1Pos;
 
-sfRectangleShape *stackframe2;
+sfRectangleShape *stackframeBox2;
 sfVector2f stackframe2Pos;
 
-sfRectangleShape *stackframe3;
+sfRectangleShape *stackframeBox3;
 sfVector2f stackframe3Pos;
 
-sfRectangleShape *stackframe4;
+sfRectangleShape *stackframeBox4;
 sfVector2f stackframe4Pos;
 
-sfRectangleShape *stackframe5;
+sfRectangleShape *stackframeBox5;
 sfVector2f stackframe5Pos;
 
 sfVector2f stackFrameText1Pos;
@@ -223,14 +231,14 @@ sfText *returnAddress5;
 
 
 // Read File
-char *fname;
-FILE *file;
-char line[256];
-char *sourceCode;
+// char *fname;
+// FILE *file;
+// char line[256];
+// char *sourceCode;
 int lineCount;
 
-char *lineNumbersStr;
-char buffer[12];
+// char *lineNumbersStr;
+// char buffer[12];
 
 char *fileNameChar;
 char *val1;

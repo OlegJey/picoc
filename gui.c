@@ -2,8 +2,57 @@
 #include "gui.h"
 
 
+/*File öffnen und Sourcecode in chararray speichern für Ausgabe*/
+char *getSourceCode(struct ParseState *Parser)
+{
+    char *fname = calloc(1024, sizeof(char));
 
-sfText *getText(sfVector2f pos, char *string, sfFont *font, int size, sfColor color) {
+    strcpy(fname, getFileName(fname, Parser));
+    FILE *file;
+    file = fopen(fname, "r");
+    char* sourceCode = calloc(10024, sizeof(char));
+
+    lineCount = 0;
+    char line[256];
+    while (fgets(line, sizeof(line), file))
+    {
+        strcat(sourceCode, line);
+        lineCount++;
+    }
+    strcat(sourceCode, "\0");
+    return sourceCode;
+}
+
+ /*chararray mit Liniennummerierung für angezeigten SourceCode*/
+char *getLineNumbersString(){
+    char *lineNumbersStr = calloc(1024, sizeof(char));
+    char buffer[12];
+    for (int i = 1; i <= lineCount; i++)
+    {
+        sprintf(buffer, "%d", i); //int to char
+        strcat(lineNumbersStr, buffer);
+        strcat(lineNumbersStr, "\n"); //newline Hinzufügen funktioniert noch nicht
+    }
+    strcat(lineNumbersStr, "\0");
+    return lineNumbersStr;
+
+}
+
+
+sfRectangleShape *getRectangleShape(sfVector2f size, sfVector2f pos, sfColor fillColor, sfColor outlineColor, float thickness)
+{
+    sfRectangleShape *rec;
+    rec = sfRectangleShape_create();
+    sfRectangleShape_setSize(rec, size);
+    sfRectangleShape_setPosition(rec, pos);
+    sfRectangleShape_setFillColor(rec, fillColor);
+    sfRectangleShape_setOutlineColor(rec, outlineColor);
+    sfRectangleShape_setOutlineThickness(rec, thickness);
+    return rec;
+}
+
+sfText *getText(sfVector2f pos, char *string, sfFont *font, int size, sfColor color)
+{
     sfText *text;
     text = sfText_create();
     sfText_setString(text, string);
@@ -14,104 +63,113 @@ sfText *getText(sfVector2f pos, char *string, sfFont *font, int size, sfColor co
     return text;
 }
 
-sfVector2f getVector(int x, int y) {
-	sfVector2f temp = {x,y};
-	return temp;
+sfVector2f getVector(int x, int y)
+{
+    sfVector2f temp = {x, y};
+    return temp;
 }
 
-int gui_handler() {
+struct StackFrameTexts *getStackFrameTexts(struct StackFrame *frame){
+    struct StackFrameTexts *block = malloc(sizeof(struct StackFrameTexts));
+    block->paramCount = calloc(1024, sizeof(char));
+    block->currentLocalVar = calloc(1024, sizeof(char));
+    block->currentReturnDetail = calloc(1024, sizeof(char));
+    block->funcName = calloc(1024, sizeof(char));
 
-	if(window != NULL)
-		return kill_gui();
-	else
-		return init_gui();
+    char *funcNameBuffer = calloc(1024, sizeof(char));
+    char *paramBuffer = calloc(1024, sizeof(char));
+    char *localVarBuffer = calloc(1024, sizeof(char));
+     
+    //  //Function Name
+    strcpy(block->funcName, "Function name: ");
+    getFuncName(funcNameBuffer, frame);
+    strcat(block->funcName, funcNameBuffer);
+    
+    //Amount Parameter
+    strcpy(block->paramCount, "Anzahl Parameter: ");
+    getNumParamAsString(paramBuffer, frame);
+    strcat(block->paramCount, paramBuffer);
+   
+    //Return details
+    getRetDetails(block->currentReturnDetail, frame);
+   
+    //Local Data
+    strcpy(block->currentLocalVar, "Lokale Variablen: ");
+    getLocalVarAndVal(localVarBuffer, frame);
+    strcat(block->currentLocalVar, localVarBuffer);
+
+    return block;
 }
 
-int init_gui() {
-	
-	/* Create the main window */
+void delStackFrameTexts(struct StackFrameTexts *sft){
+    if(sft != NULL){
+        free(sft->currentLocalVar);
+        free(sft->currentReturnDetail);
+        free(sft->funcName);
+        free(sft->paramCount);
+        free(sft);
+    }
+}
 
-	vmode.width = 1200;
-	vmode.height = 600;
-	vmode.bitsPerPixel = 32;
-	
-	window = sfRenderWindow_create(vmode, "PicoC GUI", sfResize | sfClose, NULL);
-	if (!window)
-	    return -1;
-	sfRenderWindow_setFramerateLimit(window, 60);
+int gui_handler()
+{
 
-    /* Create a graphical text to display */
+    if (window != NULL)
+        return kill_gui();
+    else
+        return init_gui();
+}
+
+int init_gui()
+{
+
+    /* Create the main window */
+
+    vmode.width = 1200;
+    vmode.height = 600;
+    vmode.bitsPerPixel = 32;
+
+    window = sfRenderWindow_create(vmode, "PicoC GUI", sfResize | sfClose, NULL);
+    if (!window)
+        return -1;
+    sfRenderWindow_setFramerateLimit(window, 60);
+
+    /* Create a font for sfText */
     font = sfFont_createFromFile("arial.ttf");
     if (!font)
         return 1;
 
-	// Create Shapes
-    infoBlockSize = getVector(500, 80);
-    infoBlockPos = getVector(800, 40);
-    infoBlock = sfRectangleShape_create();
-    sfRectangleShape_setSize(infoBlock, infoBlockSize);
-    sfRectangleShape_setFillColor(infoBlock, sfCyan);
-    sfRectangleShape_setPosition(infoBlock, infoBlockPos);
-    sfRectangleShape_setOutlineColor(infoBlock, sfBlack);
-    sfRectangleShape_setOutlineThickness(infoBlock, 2.0);
+    // Create Shapes
+    //infoBlock shows: filename, runmode, executed line
+    infoBlock = getRectangleShape(getVector(500, 80), getVector(600, 40), sfCyan, sfBlack, 2.0);
 
-    stackframe1Size = getVector(500, 100);
-    stackframe1Pos = getVector(800, 120);
-    stackframe1 = sfRectangleShape_create();
-    sfRectangleShape_setSize(stackframe1, stackframe1Size);
-    sfRectangleShape_setFillColor(stackframe1, sfGreen);
-    sfRectangleShape_setPosition(stackframe1, stackframe1Pos);
-    sfRectangleShape_setOutlineColor(stackframe1, sfBlack);
-    sfRectangleShape_setOutlineThickness(stackframe1, 2.0);
+    stackframeBox1 = getRectangleShape(getVector(500, 100), getVector(600, 120), sfColor_fromRGBA(154, 192, 205, 255), sfBlack, 2.0);
 
-    stackframe2Pos = getVector(800, 220);
-    stackframe2 = sfRectangleShape_create();
-    sfRectangleShape_setSize(stackframe2, stackframe1Size);
-    sfRectangleShape_setFillColor(stackframe2, sfRed);
-    sfRectangleShape_setPosition(stackframe2, stackframe2Pos);
-    sfRectangleShape_setOutlineColor(stackframe2, sfBlack);
-    sfRectangleShape_setOutlineThickness(stackframe2, 2.0);
+    stackframeBox2 = getRectangleShape(getVector(500, 100), getVector(600, 220), sfColor_fromRGBA(131, 111, 255, 240), sfBlack, 2.0);
 
-	stackframe3Pos = getVector(800, 320);
-    stackframe3 = sfRectangleShape_create();
-    sfRectangleShape_setSize(stackframe3, stackframe1Size);
-    sfRectangleShape_setFillColor(stackframe3, sfGreen);
-    sfRectangleShape_setPosition(stackframe3, stackframe3Pos);
-    sfRectangleShape_setOutlineColor(stackframe3, sfBlack);
-    sfRectangleShape_setOutlineThickness(stackframe3, 2.0);
+    stackframeBox3 = getRectangleShape(getVector(500, 100), getVector(600, 320), sfColor_fromRGBA(255, 127, 36, 240), sfBlack, 2.0);
 
-	stackframe4Pos = getVector(800, 420);
-    stackframe4 = sfRectangleShape_create();
-    sfRectangleShape_setSize(stackframe4, stackframe1Size);
-    sfRectangleShape_setFillColor(stackframe4, sfRed);
-    sfRectangleShape_setPosition(stackframe4, stackframe4Pos);
-    sfRectangleShape_setOutlineColor(stackframe4, sfBlack);
-    sfRectangleShape_setOutlineThickness(stackframe4, 2.0);
+    stackframeBox4 = getRectangleShape(getVector(500, 100), getVector(600, 420), sfColor_fromRGBA(127, 255, 0, 240), sfBlack, 2.0);
 
-    stackframe5Pos = getVector(800, 520);
-    stackframe5 = sfRectangleShape_create();
-    sfRectangleShape_setSize(stackframe5, stackframe1Size);
-    sfRectangleShape_setFillColor(stackframe5, sfGreen);
-    sfRectangleShape_setPosition(stackframe5, stackframe5Pos);
-    sfRectangleShape_setOutlineColor(stackframe5, sfBlack);
-    sfRectangleShape_setOutlineThickness(stackframe5, 2.0);
+    stackframeBox5 = getRectangleShape(getVector(500, 100), getVector(600, 520), sfColor_fromRGBA(205, 198, 115, 240), sfBlack, 2.0);
 
-	// Set position, font, size, color and create
-	codePos = getVector(50, 70);  
+    // Set position, font, size, color and create Text
+    //setString happens in refresh_gui()
+    codePos = getVector(50, 70);
     code = sfText_create();
     sfText_setFont(code, font);
     sfText_setCharacterSize(code, 13);
     sfText_setColor(code, sfBlack);
     sfText_setPosition(code, codePos);
- 
-	lineNumbersPos = getVector(20, 70);
+
+    lineNumbersPos = getVector(20, 70);
     lineNumbers = sfText_create();
     sfText_setFont(lineNumbers, font);
     sfText_setCharacterSize(lineNumbers, 13);
     sfText_setColor(lineNumbers, sfBlack);
     sfText_setPosition(lineNumbers, lineNumbersPos);
 
-    nextStepPos = getVector(800, 11);
+    nextStepPos = getVector(600, 11);
     nextStep = sfText_create();
     sfText_setString(nextStep, "Mit Leertaste weiter"); //Parser->FileName);
     sfText_setFont(nextStep, font);
@@ -119,502 +177,259 @@ int init_gui() {
     sfText_setColor(nextStep, sfBlack);
     sfText_setPosition(nextStep, nextStepPos);
 
-    fileNamePos = getVector(802, 46);
+    fileNamePos = getVector(602, 46);
     fileName = sfText_create();
     sfText_setFont(fileName, font);
     sfText_setCharacterSize(fileName, 13);
     sfText_setColor(fileName, sfBlack);
     sfText_setPosition(fileName, fileNamePos);
 
-    runningModePos = getVector(802, 71);
+    runningModePos = getVector(602, 71);
     runningMode = sfText_create();
     sfText_setFont(runningMode, font);
     sfText_setCharacterSize(runningMode, 13);
     sfText_setColor(runningMode, sfBlack);
     sfText_setPosition(runningMode, runningModePos);
 
-
-    executedLinePos = getVector(802, 96); 
+    executedLinePos = getVector(602, 96);
     executedLine = sfText_create();
     sfText_setFont(executedLine, font);
     sfText_setCharacterSize(executedLine, 13);
     sfText_setColor(executedLine, sfBlack);
     sfText_setPosition(executedLine, executedLinePos);
-   
-	// Stackframe 1
+
+    stackFrameText1Pos = getVector(602, 121);
+    stackFrameText2Pos = getVector(602, 221);
+    stackFrameText3Pos = getVector(602, 321);
+    stackFrameText4Pos = getVector(602, 421);
+    stackFrameText5Pos = getVector(602, 521);
+    // Stackframe 1
 
     stackFrameText1 = getText(stackFrameText1Pos, "Stackframe 1", font, 13, sfBlack);
-    functionNameSF1Pos = getVector(802, 137);
-    //functionNameSF1 = getText(functionNameSF1Pos, "Funktionsname: ", font, 13, sfBlack); 
-    parameterCountPos1 = getVector(802, 153);
-    returnTypePos1 = getVector(802, 169);
-    localVarPos1 = getVector(802, 185);
-    returnAddressPos1 = getVector(802, 201);
+    functionNameSF1Pos = getVector(602, 137);
+    parameterCountPos1 = getVector(602, 153);
+    returnTypePos1 = getVector(602, 169);
+    localVarPos1 = getVector(602, 185);
+    returnAddressPos1 = getVector(602, 201);
 
-	// Stackframe 2
-	stackFrameText2 = getText(stackFrameText2Pos, "Stackframe 2", font, 13, sfBlack);
-    functionNameSF2Pos = getVector(802, 237);
-    //functionNameSF2 = getText(functionNameSF2Pos, "Funktionsname: ", font, 13, sfBlack); //Speicherzugriffsfehler
-    parameterCountPos2 = getVector(802, 253);
-	returnTypePos2 = getVector(802, 269);
-    localVarPos2 = getVector(802, 285);
-    returnAddressPos2 = getVector(802, 301);    
+    // Stackframe 2
+    stackFrameText2 = getText(stackFrameText2Pos, "Stackframe 2", font, 13, sfBlack);
+    functionNameSF2Pos = getVector(602, 237);
+    parameterCountPos2 = getVector(602, 253);
+    returnTypePos2 = getVector(602, 269);
+    localVarPos2 = getVector(602, 285);
+    returnAddressPos2 = getVector(602, 301);
 
-	// Stackframe 3	
-	stackFrameText3 = getText(stackFrameText3Pos, "Stackframe 3", font, 13, sfBlack);
-    functionNameSF3Pos = getVector(802, 337);
-	//functionNameSF3 = getText(functionNameSF3Pos, "Funktionsname: ", font, 13, sfBlack); //Speicherzugriffsfehler
-    parameterCountPos3 = getVector(802, 353);
-    returnTypePos3 = getVector(802, 369);
-    localVarPos3 = getVector(802, 385);
-    returnAddressPos3 = getVector(802, 401);
-   
-	// Stackframe 4
+    // Stackframe 3
+    stackFrameText3 = getText(stackFrameText3Pos, "Stackframe 3", font, 13, sfBlack);
+    functionNameSF3Pos = getVector(602, 337);
+    parameterCountPos3 = getVector(602, 353);
+    returnTypePos3 = getVector(602, 369);
+    localVarPos3 = getVector(602, 385);
+    returnAddressPos3 = getVector(602, 401);
 
+    // Stackframe 4
+    stackFrameText4 = getText(stackFrameText4Pos, "Stackframe 4", font, 13, sfBlack);
+    functionNameSF4Pos = getVector(602, 437);
+    parameterCountPos4 = getVector(602, 453);
+    returnTypePos4 = getVector(602, 469);
+    localVarPos4 = getVector(602, 485);
+    returnAddressPos4 = getVector(602, 501);
 
-	// Stackframe 5
-    stackFrameText1Pos = getVector(802, 121);
-    stackFrameText2Pos = getVector(802, 221);
-    stackFrameText3Pos = getVector(802, 321);
-    stackFrameText4Pos = getVector(802, 421);
-    stackFrameText5Pos = getVector(802, 521);
+    // Stackframe 5
+    stackFrameText5 = getText(stackFrameText5Pos, "Stackframe 5", font, 13, sfBlack);
+    functionNameSF5Pos = getVector(602, 537);
+    parameterCountPos5 = getVector(602, 553);
+    returnTypePos5 = getVector(602, 569);
+    localVarPos5 = getVector(602, 585);
+    returnAddressPos5 = getVector(602, 501);
 
     return 0;
 }
 
-int kill_gui() {
+int kill_gui()
+{
 
     // Cleanup resources
     sfText_destroy(nextStep);
     sfText_destroy(code);
-	sfText_destroy(lineNumbers);
+    sfText_destroy(lineNumbers);
     sfText_destroy(fileName);
     sfText_destroy(runningMode);
     sfText_destroy(executedLine);
 
     sfRectangleShape_destroy(infoBlock);
-    sfRectangleShape_destroy(stackframe1);
-    sfRectangleShape_destroy(stackframe2);
-    sfRectangleShape_destroy(stackframe3);
-    sfRectangleShape_destroy(stackframe4);
-    sfRectangleShape_destroy(stackframe5);
+    sfRectangleShape_destroy(stackframeBox1);
+    sfRectangleShape_destroy(stackframeBox2);
+    sfRectangleShape_destroy(stackframeBox3);
+    sfRectangleShape_destroy(stackframeBox4);
+    sfRectangleShape_destroy(stackframeBox5);
 
+    // Stackframe 1
+    sfText_destroy(stackFrameText1);
+    free(funcNameSF1);
+    free(funcNameBuffer1);
+    sfText_destroy(functionNameSF1);
+    free(paramCount1);
+    free(paramBuffer1);
+    sfText_destroy(parameterCount1);
+    free(currentReturnType1);
+    free(returnTypeBuffer1);
+    sfText_destroy(returnType1);
+    free(currentlocalVar1);
+    free(localVarBuffer1);
+    sfText_destroy(localVar1);
+    free(currentreturnAddress1);
+    free(currentAddressBuffer1);
+    sfText_destroy(returnAddress1);
 
-	// Stackframe 1
-	sfText_destroy(stackFrameText1);
-	free(funcNameSF1);
-	free(funcNameBuffer1);
-	sfText_destroy(functionNameSF1);
-	free(paramCount1);
-	free(paramBuffer1);
-	sfText_destroy(parameterCount1);
-	free(currentReturnType1);
-	free(returnTypeBuffer1);
-	sfText_destroy(returnType1);
-	free(currentlocalVar1); 
-	free(localVarBuffer1);
-	sfText_destroy(localVar1);
-	free(currentreturnAddress1);
-	free(currentAddressBuffer1);
-	sfText_destroy(returnAddress1);
+    // Stackframe 2
+    sfText_destroy(stackFrameText2);
+    free(funcNameSF2);
+    free(funcNameBuffer2);
+    sfText_destroy(functionNameSF2);
+    free(paramCount2);
+    free(paramBuffer2);
+    sfText_destroy(parameterCount2);
+    free(currentReturnType2);
+    free(returnTypeBuffer2);
+    sfText_destroy(returnType2);
+    free(currentlocalVar2);
+    free(localVarBuffer2);
+    sfText_destroy(localVar2);
+    free(currentreturnAddress2);
+    free(currentAddressBuffer2);
+    sfText_destroy(returnAddress2);
 
-	// Stackframe 2
-	sfText_destroy(stackFrameText2);
-	free(funcNameSF2);
-	free(funcNameBuffer2);
-	sfText_destroy(functionNameSF2);
-	free(paramCount2);
-	free(paramBuffer2);
-	sfText_destroy(parameterCount2);
-	free(currentReturnType2);
-	free(returnTypeBuffer2);
-	sfText_destroy(returnType2);
-	free(currentlocalVar2);
-	free(localVarBuffer2);
-	sfText_destroy(localVar2);
-	free(currentreturnAddress2);
-	free(currentAddressBuffer2);
-	sfText_destroy(returnAddress2);
+    // Stackframe 3
+    sfText_destroy(stackFrameText3);
+    free(funcNameSF3);
+    free(funcNameBuffer3);
+    sfText_destroy(functionNameSF3);
+    free(paramCount3);
+    free(paramBuffer3);
+    sfText_destroy(parameterCount3);
+    free(currentReturnType3);
+    free(returnTypeBuffer3);
+    sfText_destroy(returnType3);
+    free(currentlocalVar3);
+    free(localVarBuffer3);
+    sfText_destroy(localVar3);
+    free(currentreturnAddress3);
+    free(currentAddressBuffer3);
+    sfText_destroy(returnAddress3);
 
-	// Stackframe 3
-	sfText_destroy(stackFrameText3);
-	free(funcNameSF3);
-	free(funcNameBuffer3);
-	sfText_destroy(functionNameSF3);
-	free(paramCount3);
-	free(paramBuffer3);
-	sfText_destroy(parameterCount3);
-	free(currentReturnType3);
-	free(returnTypeBuffer3);
-	sfText_destroy(returnType3);
-	free(currentlocalVar3);
-	free(localVarBuffer3);
-	sfText_destroy(localVar3);
-	free(currentreturnAddress3);
-	free(currentAddressBuffer3);
-	sfText_destroy(returnAddress3);
+    // Stackframe 4
+    sfText_destroy(stackFrameText4);
+    free(funcNameSF4);
+    free(funcNameBuffer4);
+    sfText_destroy(functionNameSF4);
+    free(paramCount4);
+    free(paramBuffer4);
+    sfText_destroy(parameterCount4);
+    free(currentReturnType4);
+    free(returnTypeBuffer4);
+    sfText_destroy(returnType4);
+    free(currentlocalVar4);
+    free(localVarBuffer4);
+    sfText_destroy(localVar4);
+    free(currentreturnAddress4);
+    free(currentAddressBuffer4);
+    sfText_destroy(returnAddress4);
 
-	// Stackframe 4
-	sfText_destroy(stackFrameText4);
-	free(funcNameSF4);
-	free(funcNameBuffer4);
-	sfText_destroy(functionNameSF4);
-	free(paramCount4);
-	free(paramBuffer4);
-	sfText_destroy(parameterCount4);
-	free(currentReturnType4);
-	free(returnTypeBuffer4);
-	sfText_destroy(returnType4);
-	free(currentlocalVar4); 
-	free(localVarBuffer4); 
-	sfText_destroy(localVar4);
-	free(currentreturnAddress4);
-	free(currentAddressBuffer4);
-	sfText_destroy(returnAddress4);
+    // Stackframe 5
+    sfText_destroy(stackFrameText5);
+    free(funcNameSF5);
+    free(funcNameBuffer5);
+    sfText_destroy(functionNameSF5);
+    free(paramCount5);
+    free(paramBuffer5);
+    sfText_destroy(parameterCount5);
+    free(currentReturnType5);
+    free(returnTypeBuffer5);
+    sfText_destroy(returnType5);
+    free(currentlocalVar5);
+    free(localVarBuffer5);
+    sfText_destroy(localVar5);
+    free(currentreturnAddress5);
+    free(currentAddressBuffer5);
+    sfText_destroy(returnAddress5);
 
-	// Stackframe 5
-	sfText_destroy(stackFrameText5); 
-	free(funcNameSF5);
-	free(funcNameBuffer5);
-	sfText_destroy(functionNameSF5);
-	free(paramCount5);
-	free(paramBuffer5);
-	sfText_destroy(parameterCount5);
-	free(currentReturnType5); 
-	free(returnTypeBuffer5);
-	sfText_destroy(returnType5);
-	free(currentlocalVar5);
-	free(localVarBuffer5);
-	sfText_destroy(localVar5);
-	free(currentreturnAddress5);
-	free(currentAddressBuffer5);
-	sfText_destroy(returnAddress5);
+    // Read File   
+    
+    free(fileNameChar);
+    free(val1);
+    free(runModeString);
+    free(val2);
+    free(currentLineString);
+    free(val3);
 
-	// Read File
-	free(fname);
-	free(file);
-	free(sourceCode);
-	free(lineNumbersStr);
-	free(fileNameChar);
-	free(val1);
-	free(runModeString);
-	free(val2);
-	free(currentLineString);
-	free(val3);
-
-
-
-	sfFont_destroy(font);
+    sfFont_destroy(font);
 
     sfRenderWindow_destroy(window);
 
-	return 0;
+    return 0;
 }
 
+int refresh_gui(struct ParseState *Parser)
+{
 
+    struct StackFrame *current = get_TopStackFrame(Parser);
 
-int refresh_gui(struct ParseState *Parser) {
+    struct StackFrame *frames[5];
 
+    for (int i = 0; i < 5; i++)
+    {
 
-	struct StackFrame* current = get_TopStackFrame(Parser);
+        frames[i] = current;
+        current = get_PreviousStackFrame(current);
+    }
 
-	struct StackFrame* frames[5];
+    
+    // //Frame 1
+    struct StackFrameTexts *block1 = getStackFrameTexts(frames[0]);
+    functionNameSF1 = getText(functionNameSF1Pos, block1->funcName, font, 13, sfBlack);
+    parameterCount1 = getText(parameterCountPos1, block1->paramCount, font, 13, sfBlack);
+    returnType1 = getText(returnTypePos1, block1->currentReturnDetail, font, 13, sfBlack);
+    localVar1 = getText(localVarPos1, block1->currentLocalVar, font, 13, sfBlack);
 
+    //Frame 2
+    struct StackFrameTexts *block2 = getStackFrameTexts(frames[1]);
+    functionNameSF2 = getText(functionNameSF2Pos, block2->funcName, font, 13, sfBlack);
+    parameterCount2 = getText(parameterCountPos2, block2->paramCount, font, 13, sfBlack);
+    returnType2 = getText(returnTypePos2, block2->currentReturnDetail, font, 13, sfBlack);
+    localVar2 = getText(localVarPos2, block2->currentLocalVar, font, 13, sfBlack);
+   
 
-	for(int i = 0; i < 5; i++){
-	
-	frames[i] = current;
-	current = get_PreviousStackFrame(current);
-
-}
-
-
-//Frame 1
-	paramCount1 = calloc(1024, sizeof(char));
-	paramBuffer1 = calloc(1024, sizeof(char));
-
-	currentlocalVar1 = calloc(1024, sizeof(char));
-	localVarBuffer1 = calloc(1024, sizeof(char));
-	
-	currentReturnType1 = calloc(1024, sizeof(char));
-	
-	funcNameSF1 = calloc(1024, sizeof(char));
-	funcNameBuffer1 = calloc(1024, sizeof(char));
-  
-
-		
-	//Name
-	strcpy(funcNameSF1,"Function name: ");
-	getFuncName(funcNameBuffer1, frames[0]);
-	strcat(funcNameSF1, funcNameBuffer1);
-	functionNameSF1 = getText(functionNameSF1Pos, funcNameSF1, font, 13, sfBlack);
-	
-
-   //Amount Parameter
-    strcpy(paramCount1, "Anzahl Parameter: ");
-    getNumParamAsString(paramBuffer1, frames[0]); 
-    strcat(paramCount1, paramBuffer1);
-    parameterCount1 = getText(parameterCountPos1, paramCount1, font, 13, sfBlack);
-
-
-	//Return shit  
-    getRetDetails(currentReturnType1,frames[0]);
-    returnType1 = getText(returnTypePos1, currentReturnType1, font, 13, sfBlack);
-
-
-    //Local Data
-    strcpy(currentlocalVar1, "Lokale Variablen: ");
-    getLocalVarAndVal(localVarBuffer1, frames[0]);
-    strcat(currentlocalVar1, localVarBuffer1);
-    localVar1 = getText(localVarPos1, currentlocalVar1, font, 13, sfBlack);
-
-
-
-
-
-
-//Frame 2
-	paramCount2 = calloc(1024, sizeof(char));
-	paramBuffer2 = calloc(1024, sizeof(char));
-
-	currentlocalVar2 = calloc(1024, sizeof(char));
-	localVarBuffer2 = calloc(1024, sizeof(char));
-	
-	currentReturnType2 = calloc(1024, sizeof(char));
-	
-	funcNameSF2 = calloc(1024, sizeof(char));
-	funcNameBuffer2 = calloc(1024, sizeof(char));
-  
-
-		
-	//Name
-	strcpy(funcNameSF2,"Function name: ");
-	getFuncName(funcNameBuffer2, frames[1]);
-	strcat(funcNameSF2, funcNameBuffer2);
-	functionNameSF2 = getText(functionNameSF2Pos, funcNameSF2, font, 13, sfBlack);
-	
-
-   //Amount Parameter
-    strcpy(paramCount2, "Anzahl Parameter: ");
-    getNumParamAsString(paramBuffer2, frames[1]); 
-    strcat(paramCount2, paramBuffer2);
-    parameterCount2 = getText(parameterCountPos2, paramCount2, font, 13, sfBlack);
-
-
-	//Return shit  
-    getRetDetails(currentReturnType2, frames[1]);
-    returnType2 = getText(returnTypePos2, currentReturnType2, font, 13, sfBlack);
-
-
-    //Local Data
-    strcpy(currentlocalVar2, "Lokale Variablen: ");
-    getLocalVarAndVal(localVarBuffer2, frames[1]);
-    strcat(currentlocalVar2, localVarBuffer2);
-    localVar2 = getText(localVarPos2, currentlocalVar2, font, 13, sfBlack);
-
-
-
-
-
-
-
-
-
-
-
-//Frame 3
-	paramCount3 = calloc(1024, sizeof(char));
-	paramBuffer3 = calloc(1024, sizeof(char));
-
-	currentlocalVar3 = calloc(1024, sizeof(char));
-	localVarBuffer3 = calloc(1024, sizeof(char));
-	
-	currentReturnType3 = calloc(1024, sizeof(char));
-	
-	funcNameSF3 = calloc(1024, sizeof(char));
-	funcNameBuffer3 = calloc(1024, sizeof(char));
-  
-
-		
-	//Name
-	strcpy(funcNameSF3,"Function name: ");
-	getFuncName(funcNameBuffer3, frames[2]);
-	strcat(funcNameSF3, funcNameBuffer3);
-	functionNameSF3 = getText(functionNameSF3Pos, funcNameSF3, font, 13, sfBlack);
-	
-
-   //Amount Parameter
-    strcpy(paramCount3, "Anzahl Parameter: ");
-    getNumParamAsString(paramBuffer3, frames[2]); 
-    strcat(paramCount3, paramBuffer3);
-    parameterCount3 = getText(parameterCountPos3, paramCount3, font, 13, sfBlack);
-
-
-	//Return shit  
-    getRetDetails(currentReturnType3, frames[2]);
-    returnType3 = getText(returnTypePos3, currentReturnType3, font, 13, sfBlack);
-
-
-    //Local Data
-    strcpy(currentlocalVar3, "Lokale Variablen: ");
-    getLocalVarAndVal(localVarBuffer3, frames[2]);
-    strcat(currentlocalVar3, localVarBuffer3);
-    localVar3 = getText(localVarPos3, currentlocalVar3, font, 13, sfBlack);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    //Frame 3
+    struct StackFrameTexts *block3 = getStackFrameTexts(frames[2]);
+    functionNameSF3 = getText(functionNameSF3Pos, block3->funcName, font, 13, sfBlack);
+    parameterCount3 = getText(parameterCountPos3, block3->paramCount, font, 13, sfBlack);
+    returnType3 = getText(returnTypePos3, block3->currentReturnDetail, font, 13, sfBlack);
+    localVar3 = getText(localVarPos3, block3->currentLocalVar, font, 13, sfBlack);
+   
     //STACKFRAME 4
-/*    stackFrameText4 = getText(stackFrameText4Pos, "Stackframe 4", font, 13, sfBlack);
-
-    functionNameSF4Pos = getVector(802, 437);
-    funcNameSF4 = calloc(1024, sizeof(char));
-    strcpy(funcNameSF4, "Funktionsname: ");
-    funcNameBuffer4 = calloc(1024, sizeof(char));
-    if (Parser->pc->TopStackFrame)
-        getFuncName(funcNameBuffer4, get_StackFrame(Parser)); //Parser->pc->TopStackFrame);
-    strcat(funcNameSF4, funcNameBuffer4);
-    functionNameSF4 = getText(functionNameSF4Pos, "Funktionsname: ", font, 13, sfBlack); //Speicherzugriffsfehler
-
-    parameterCountPos4 = getVector(802, 453);
-    paramCount4 = calloc(1024, sizeof(char));
-    strcpy(paramCount4, "Anzahl Parameter: ");
-    paramBuffer4 = calloc(1024, sizeof(char));
-    if (Parser->pc->TopStackFrame)
-        getNumParamAsString(paramBuffer4, get_StackFrame(Parser)); //Parser->pc->TopStackFrame);
-    strcat(paramCount4, paramBuffer4);
-    parameterCount4 = getText(parameterCountPos4, paramCount4, font, 13, sfBlack);
-
-    returnTypePos4 = getVector(802, 469);
-    currentReturnType4 = calloc(1024, sizeof(char));
-    strcpy(currentReturnType4, "Rueckgabetyp: ");
-    returnTypeBuffer4 = calloc(1024, sizeof(char));
-
-    if (Parser->pc->TopStackFrame)
-        getRetDetails(returnTypeBuffer4, Parser->pc->TopStackFrame);
-    strcat(currentReturnType4, returnTypeBuffer4);
-    returnType4 = getText(returnTypePos4, currentReturnType4, font, 13, sfBlack);
-
-    localVarPos4 = getVector(802, 485);
-    currentlocalVar4 = calloc(1024, sizeof(char));
-    strcpy(currentlocalVar4, "Lokale Variablen: ");
-    localVarBuffer4 = calloc(1024, sizeof(char));
-
-    if (Parser->pc->TopStackFrame)
-        getLocalVarAndVal(localVarBuffer4, Parser->pc->TopStackFrame);
-    strcat(currentlocalVar4, localVarBuffer4);
-    localVar4 = getText(localVarPos4, currentlocalVar4, font, 13, sfBlack);
-
-    returnAddressPos4 = getVector(802, 501);
-    currentreturnAddress4 = calloc(1024, sizeof(char));
-    strcpy(currentreturnAddress4, "Returndetails: ");
-    currentAddressBuffer4 = calloc(1024, sizeof(char));
-
-    if (Parser->pc->TopStackFrame)
-        getRetDetails(currentAddressBuffer4, Parser->pc->TopStackFrame);
-    strcat(currentreturnAddress4, currentAddressBuffer4);
-    returnAddress4 = getText(returnAddressPos4, currentreturnAddress4, font, 13, sfBlack);
-
+    struct StackFrameTexts *block4 = getStackFrameTexts(frames[3]);
+    functionNameSF4 = getText(functionNameSF4Pos, block4->funcName, font, 13, sfBlack);
+    parameterCount4 = getText(parameterCountPos4, block4->paramCount, font, 13, sfBlack);
+    returnType4 = getText(returnTypePos4, block4->currentReturnDetail, font, 13, sfBlack);
+    localVar4 = getText(localVarPos4, block4->currentLocalVar, font, 13, sfBlack);
+   
     //STACKFRAME 5
-    stackFrameText5 = getText(stackFrameText5Pos, "Stackframe 5", font, 13, sfBlack);
+    struct StackFrameTexts *block5 = getStackFrameTexts(frames[4]);
+    functionNameSF5 = getText(functionNameSF5Pos, block5->funcName, font, 13, sfBlack);
+    parameterCount5 = getText(parameterCountPos5, block5->paramCount, font, 13, sfBlack);
+    returnType5 = getText(returnTypePos5, block5->currentReturnDetail, font, 13, sfBlack);
+    localVar5 = getText(localVarPos5, block5->currentLocalVar, font, 13, sfBlack);
+   
+    
 
-    functionNameSF5Pos = getVector(802, 537);
-    funcNameSF5 = calloc(1024, sizeof(char));
-    strcpy(funcNameSF5, "Funktionsname: ");
-    funcNameBuffer5 = calloc(1024, sizeof(char));
-    if (Parser->pc->TopStackFrame)
-        getFuncName(funcNameBuffer5, get_StackFrame(Parser)); //Parser->pc->TopStackFrame);
-    strcat(funcNameSF5, funcNameBuffer5);
-    functionNameSF5 = getText(functionNameSF5Pos, "Funktionsname: ", font, 13, sfBlack); //Speicherzugriffsfehler
+    char *sourceCodeString = getSourceCode(Parser);
+    sfText_setString(code, sourceCodeString);
 
-    parameterCountPos5 = getVector(802, 553);
-    paramCount5 = calloc(1024, sizeof(char));
-    strcpy(paramCount5, "Anzahl Parameter: ");
-    paramBuffer5 = calloc(1024, sizeof(char));
-    if (Parser->pc->TopStackFrame)
-        getNumParamAsString(paramBuffer5, get_StackFrame(Parser)); //Parser->pc->TopStackFrame);
-    strcat(paramCount5, paramBuffer5);
-    parameterCount5 = getText(parameterCountPos5, paramCount5, font, 13, sfBlack);
-
-    returnTypePos5 = getVector(802, 569);
-    currentReturnType5 = calloc(1024, sizeof(char));
-    strcpy(currentReturnType5, "Rueckgabetyp: ");
-    returnTypeBuffer5 = calloc(1024, sizeof(char));
-
-    if (Parser->pc->TopStackFrame)
-        getRetDetails(returnTypeBuffer5, Parser->pc->TopStackFrame);
-    strcat(currentReturnType5, returnTypeBuffer5);
-    returnType5 = getText(returnTypePos5, currentReturnType5, font, 13, sfBlack);
-
-    localVarPos5 = getVector(802, 585);
-    currentlocalVar5 = calloc(1024, sizeof(char));
-    strcpy(currentlocalVar5, "Lokale Variablen: ");
-    localVarBuffer5 = calloc(1024, sizeof(char));
-
-    if (Parser->pc->TopStackFrame)
-        getLocalVarAndVal(localVarBuffer5, Parser->pc->TopStackFrame);
-    strcat(currentlocalVar5, localVarBuffer5);
-    localVar5 = getText(localVarPos5, currentlocalVar5, font, 13, sfBlack);
-
-    returnAddressPos5 = getVector(802, 601);
-    currentreturnAddress5 = calloc(1024, sizeof(char));
-    strcpy(currentreturnAddress5, "Returndetails: ");
-    currentAddressBuffer5 = calloc(1024, sizeof(char));
-
-    if (Parser->pc->TopStackFrame)
-        getRetDetails(currentAddressBuffer5, Parser->pc->TopStackFrame);
-    strcat(currentreturnAddress5, currentAddressBuffer5);
-    returnAddress5 = getText(returnAddressPos5, currentreturnAddress5, font, 13, sfBlack); */
-
-    /*File öffnen und Sourcecode in chararray speichern für Ausgabe*/
-    //if(getLine(Parser)>5){
-    fname = calloc(1024, sizeof(char));
-
-    strcpy(fname, getFileName(fname, Parser));
-
-    fname = getFileName(fname, Parser);
-
-    file = fopen(fname, "r");
-
-    sourceCode = calloc(10024, sizeof(char));
-
-    lineCount = 0;
-    while (fgets(line, sizeof(line), file))
-    {
-        strcat(sourceCode, line);
-        lineCount++;
-        //printf("%s", line);
-    }
-
-    strcat(sourceCode, "\0");
-
-
-    sfText_setString(code, sourceCode);
-
-
-
-    /*chararray mit Liniennummerierung für angezeigten SourceCode*/
-    lineNumbersStr = calloc(1024, sizeof(char));
-    for (int i = 1; i <= lineCount; i++)
-    {
-        sprintf(buffer, "%d", i); //int to char
-        strcat(lineNumbersStr, buffer);
-        strcat(lineNumbersStr, "\n"); //newline Hinzufügen funktioniert noch nicht
-    }
-    strcat(lineNumbersStr, "\0");
-
+    char *lineNumbersStr = getLineNumbersString();
     sfText_setString(lineNumbers, lineNumbersStr);
-    //}
+    
 
     fileNameChar = malloc(1024);
     strcpy(fileNameChar, "Dateiname: ");
@@ -636,42 +451,42 @@ int refresh_gui(struct ParseState *Parser) {
     strcpy(val3, getLineAsString(val3, Parser));
     strcat(currentLineString, val3);
     sfText_setString(executedLine, currentLineString);
-  
 
-	refresh:
-	// Clear the screen
-	sfRenderWindow_clear(window, sfWhite); //sfColor_fromRGBA(49, 60, 72, 1.0));
+refresh:
+    // Clear the screen
+    sfRenderWindow_clear(window, sfWhite); //sfColor_fromRGBA(49, 60, 72, 1.0));
 
-    if(countStackFrames(Parser) >= 1){
-        sfRenderWindow_drawRectangleShape(window, stackframe1, NULL);
+    if (countStackFrames(Parser) >= 1)
+    {
+        sfRenderWindow_drawRectangleShape(window, stackframeBox1, NULL);
         sfRenderWindow_drawText(window, stackFrameText1, NULL);
         sfRenderWindow_drawText(window, functionNameSF1, NULL);
         sfRenderWindow_drawText(window, parameterCount1, NULL);
-		sfRenderWindow_drawText(window, localVar1, NULL);        
-		sfRenderWindow_drawText(window, returnType1, NULL);
-        
-         
+        sfRenderWindow_drawText(window, localVar1, NULL);
+        sfRenderWindow_drawText(window, returnType1, NULL);
     }
-    if(countStackFrames(Parser) >= 2){    
-        sfRenderWindow_drawRectangleShape(window, stackframe2, NULL);
+    if (countStackFrames(Parser) >= 2)
+    {
+        sfRenderWindow_drawRectangleShape(window, stackframeBox2, NULL);
         sfRenderWindow_drawText(window, stackFrameText2, NULL);
         sfRenderWindow_drawText(window, functionNameSF2, NULL);
         sfRenderWindow_drawText(window, parameterCount2, NULL);
         sfRenderWindow_drawText(window, returnType2, NULL);
         sfRenderWindow_drawText(window, localVar2, NULL);
-        sfRenderWindow_drawText(window, returnAddress2, NULL); 
+        sfRenderWindow_drawText(window, returnAddress2, NULL);
     }
-    if(countStackFrames(Parser) >= 3){    
-        sfRenderWindow_drawRectangleShape(window, stackframe3, NULL);
+    if (countStackFrames(Parser) >= 3)
+    {
+        sfRenderWindow_drawRectangleShape(window, stackframeBox3, NULL);
         sfRenderWindow_drawText(window, stackFrameText3, NULL);
         sfRenderWindow_drawText(window, functionNameSF3, NULL);
         sfRenderWindow_drawText(window, parameterCount3, NULL);
         sfRenderWindow_drawText(window, returnType3, NULL);
         sfRenderWindow_drawText(window, localVar3, NULL);
-        sfRenderWindow_drawText(window, returnAddress3, NULL); 
+        sfRenderWindow_drawText(window, returnAddress3, NULL);
     }
-/*     if(countStackFrames(Parser) >= 4){    
-        sfRenderWindow_drawRectangleShape(window, stackframe4, NULL);
+    if(countStackFrames(Parser) >= 4){    
+        sfRenderWindow_drawRectangleShape(window, stackframeBox4, NULL);
         sfRenderWindow_drawText(window, stackFrameText4, NULL);
         sfRenderWindow_drawText(window, functionNameSF4, NULL);
         sfRenderWindow_drawText(window, parameterCount4, NULL);
@@ -680,38 +495,35 @@ int refresh_gui(struct ParseState *Parser) {
         sfRenderWindow_drawText(window, returnAddress4, NULL); 
     }
     if(countStackFrames(Parser) >= 5){    
-        sfRenderWindow_drawRectangleShape(window, stackframe5, NULL);
+        sfRenderWindow_drawRectangleShape(window, stackframeBox5, NULL);
         sfRenderWindow_drawText(window, stackFrameText5, NULL);
         sfRenderWindow_drawText(window, functionNameSF5, NULL);
         sfRenderWindow_drawText(window, parameterCount5, NULL);
         sfRenderWindow_drawText(window, returnType5, NULL);
         sfRenderWindow_drawText(window, localVar5, NULL);
         sfRenderWindow_drawText(window, returnAddress5, NULL);  
-    }*/
-            
+    }
 
+    // Draw the sprite
+    //sfRenderWindow_drawSprite(window, sprite, NULL);
 
-	// Draw the sprite
-	//sfRenderWindow_drawSprite(window, sprite, NULL);
+    sfRenderWindow_drawRectangleShape(window, infoBlock, NULL);
 
-	sfRenderWindow_drawRectangleShape(window, infoBlock, NULL);
+    // Draw the text
+    sfRenderWindow_drawText(window, nextStep, NULL);
+    sfRenderWindow_drawText(window, code, NULL);
+    sfRenderWindow_drawText(window, fileName, NULL);
+    sfRenderWindow_drawText(window, runningMode, NULL);
+    sfRenderWindow_drawText(window, executedLine, NULL);
+    sfRenderWindow_drawText(window, lineNumbers, NULL);
 
-	// Draw the text
-	sfRenderWindow_drawText(window, nextStep, NULL);
-	sfRenderWindow_drawText(window, code, NULL);
-	sfRenderWindow_drawText(window, fileName, NULL);
-	sfRenderWindow_drawText(window, runningMode, NULL);
-	sfRenderWindow_drawText(window, executedLine, NULL);
-	sfRenderWindow_drawText(window, lineNumbers, NULL);
-	   
-	// Update the window
-	sfRenderWindow_display(window);
-
+    // Update the window
+    sfRenderWindow_display(window);
 
     // Start the game loop
     while (sfRenderWindow_isOpen(window))
     {
-        // Process events 
+        // Process events
         while (sfRenderWindow_pollEvent(window, &event))
         {
             // Close window : exit
@@ -728,12 +540,12 @@ int refresh_gui(struct ParseState *Parser) {
                 // Move displayed source code up or down with arrow keys
                 else if (event.key.code == sfKeyUp)
                 {
-                    printf("Up Arrow pressed! \n");
+                    printf("Up Arrow pressed! \n");                      
                     codePos.y += (float)10.0;
                     lineNumbersPos.y += (float)10.0;
                     sfText_setPosition(code, codePos);
                     sfText_setPosition(lineNumbers, lineNumbersPos);
-					goto refresh;
+                    goto refresh;
                 }
                 else if (event.key.code == sfKeyDown)
                 {
@@ -742,17 +554,17 @@ int refresh_gui(struct ParseState *Parser) {
                     lineNumbersPos.y -= (float)10.0;
                     sfText_setPosition(code, codePos);
                     sfText_setPosition(lineNumbers, lineNumbersPos);
-					goto refresh;
+                    goto refresh;
                 }
             }
         }
-	}
-	breakloop:
-	printf("test\n");
-     
-
-	return 0;
+    }
+breakloop:
+    printf("test\n");
+    delStackFrameTexts(block1);
+    delStackFrameTexts(block2);
+    delStackFrameTexts(block3);
+    delStackFrameTexts(block4);
+    delStackFrameTexts(block5);
+    return 0;
 }
-
-
-
