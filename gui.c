@@ -20,6 +20,7 @@ char *getSourceCode(struct ParseState *Parser)
         lineCount++;
     }
     strcat(sourceCode, "\0");
+    free(fname);
     return sourceCode;
 }
 
@@ -141,17 +142,17 @@ int init_gui()
 
     // Create Shapes
     //infoBlock shows: filename, runmode, executed line
-    infoBlock = getRectangleShape(getVector(500, 80), getVector(600, 40), sfCyan, sfBlack, 2.0);
+    infoBlock = getRectangleShape(getVector(590, 72), getVector(600, 40), sfCyan, sfBlack, 2.0);
 
-    stackframeBox1 = getRectangleShape(getVector(500, 100), getVector(600, 120), sfColor_fromRGBA(154, 192, 205, 255), sfBlack, 2.0);
+    stackframeBox1 = getRectangleShape(getVector(590, 100), getVector(600, 120), sfColor_fromRGBA(154, 192, 205, 255), sfBlack, 2.0);
 
-    stackframeBox2 = getRectangleShape(getVector(500, 100), getVector(600, 220), sfColor_fromRGBA(131, 111, 255, 240), sfBlack, 2.0);
+    stackframeBox2 = getRectangleShape(getVector(590, 100), getVector(600, 220), sfColor_fromRGBA(131, 111, 255, 240), sfBlack, 2.0);
 
-    stackframeBox3 = getRectangleShape(getVector(500, 100), getVector(600, 320), sfColor_fromRGBA(255, 127, 36, 240), sfBlack, 2.0);
+    stackframeBox3 = getRectangleShape(getVector(590, 100), getVector(600, 320), sfColor_fromRGBA(255, 127, 36, 240), sfBlack, 2.0);
 
-    stackframeBox4 = getRectangleShape(getVector(500, 100), getVector(600, 420), sfColor_fromRGBA(127, 255, 0, 240), sfBlack, 2.0);
+    stackframeBox4 = getRectangleShape(getVector(590, 100), getVector(600, 420), sfColor_fromRGBA(127, 255, 0, 240), sfBlack, 2.0);
 
-    stackframeBox5 = getRectangleShape(getVector(500, 100), getVector(600, 520), sfColor_fromRGBA(205, 198, 115, 240), sfBlack, 2.0);
+    stackframeBox5 = getRectangleShape(getVector(590, 100), getVector(600, 520), sfColor_fromRGBA(205, 198, 115, 240), sfBlack, 2.0);
 
     // Set position, font, size, color and create Text
     //setString happens in refresh_gui()
@@ -515,6 +516,9 @@ refresh:
                     sfText_setPosition(lineNumbers, lineNumbersPos);
                     goto refresh;
                 }
+            }
+            else if(event.type == sfEvtResized){
+                goto refresh;
             }
         }
     }
