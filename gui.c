@@ -380,7 +380,7 @@ int refresh_gui(struct ParseState *Parser)
     functionNameSF5 = getText(getVector(602, 537), block5->funcName, font, 13, sfBlack);
     parameterCount5 = getText(getVector(602, 553), block5->paramCount, font, 13, sfBlack);
     returnType5 = getText(getVector(602, 569), block5->currentReturnDetail, font, 13, sfBlack);
-    localVar5 = getText(getVector(602, 501), block5->currentLocalVar, font, 13, sfBlack);
+    localVar5 = getText(getVector(602, 585), block5->currentLocalVar, font, 13, sfBlack);
    
     
 
@@ -433,7 +433,7 @@ refresh:
         sfRenderWindow_drawText(window, parameterCount2, NULL);
         sfRenderWindow_drawText(window, returnType2, NULL);
         sfRenderWindow_drawText(window, localVar2, NULL);
-        sfRenderWindow_drawText(window, returnAddress2, NULL);
+       
     }
     if (countStackFrames(Parser) >= 3)
     {
@@ -443,7 +443,7 @@ refresh:
         sfRenderWindow_drawText(window, parameterCount3, NULL);
         sfRenderWindow_drawText(window, returnType3, NULL);
         sfRenderWindow_drawText(window, localVar3, NULL);
-        sfRenderWindow_drawText(window, returnAddress3, NULL);
+        
     }
     if(countStackFrames(Parser) >= 4){    
         sfRenderWindow_drawRectangleShape(window, stackframeBox4, NULL);
@@ -452,7 +452,7 @@ refresh:
         sfRenderWindow_drawText(window, parameterCount4, NULL);
         sfRenderWindow_drawText(window, returnType4, NULL);
         sfRenderWindow_drawText(window, localVar4, NULL);
-        sfRenderWindow_drawText(window, returnAddress4, NULL); 
+        
     }
     if(countStackFrames(Parser) >= 5){    
         sfRenderWindow_drawRectangleShape(window, stackframeBox5, NULL);
@@ -461,7 +461,7 @@ refresh:
         sfRenderWindow_drawText(window, parameterCount5, NULL);
         sfRenderWindow_drawText(window, returnType5, NULL);
         sfRenderWindow_drawText(window, localVar5, NULL);
-        sfRenderWindow_drawText(window, returnAddress5, NULL);  
+         
     }
 
     // Draw the sprite
