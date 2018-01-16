@@ -416,7 +416,7 @@ char* getGlobalVarAndVal(char* to, struct ParseState *Parser){
 	//in fact its necessary to erase our String
 	strcpy(to,""); 
 	
-	struct Value *wert;
+	
 	if(Parser->pc){
 	
 	struct Table *Tbl = &Parser->pc->GlobalTable;

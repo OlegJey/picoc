@@ -74,6 +74,10 @@ sfVector2f stackFrameText4Pos;
 sfVector2f stackFrameText5Pos;
 
 
+//circle
+sfCircleShape *indicator;
+sfVector2f indicator_pos;
+
 // Stackframe 1
 sfText *stackFrameText1;
 
