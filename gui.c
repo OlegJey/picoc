@@ -87,7 +87,7 @@ struct StackFrameTexts *getStackFrameTexts(struct StackFrame *frame){
     strcat(block->funcName, funcNameBuffer);
     
     //Amount Parameter
-    strcpy(block->paramCount, "Anzahl Parameter: ");
+    strcpy(block->paramCount, "Parameter count: ");
     getNumParamAsString(paramBuffer, frame);
     strcat(block->paramCount, paramBuffer);
    
@@ -95,7 +95,7 @@ struct StackFrameTexts *getStackFrameTexts(struct StackFrame *frame){
     getRetDetails(block->currentReturnDetail, frame);
    
     //Local Data
-    strcpy(block->currentLocalVar, "Lokale Variablen: ");
+    strcpy(block->currentLocalVar, "Local variables: ");
     getLocalVarAndVal(localVarBuffer, frame);
     strcat(block->currentLocalVar, localVarBuffer);
 
@@ -194,7 +194,7 @@ int init_gui()
 
     nextStepPos = getVector(600, 11);
     nextStep = sfText_create();
-    sfText_setString(nextStep, "Mit Leertaste weiter"); //Parser->FileName);
+    sfText_setString(nextStep, "Next step: space key"); //Parser->FileName);
     sfText_setFont(nextStep, font);
     sfText_setCharacterSize(nextStep, 17);
     sfText_setColor(nextStep, sfBlack);
@@ -431,7 +431,7 @@ int refresh_gui(struct ParseState *Parser){
 		
 
 		fileNameChar = malloc(1024);
-		strcpy(fileNameChar, "Dateiname: ");
+		strcpy(fileNameChar, "File name: ");
 		val1 = malloc(1024);
 		strcpy(val1, getFileName(val1, Parser));
 		strcat(fileNameChar, val1);
@@ -445,7 +445,7 @@ int refresh_gui(struct ParseState *Parser){
 		sfText_setString(runningMode, runModeString);
 
 		currentLineString = calloc(1024, sizeof(char));
-		strcpy(currentLineString, "Ausgefuehrte Zeile: ");
+		strcpy(currentLineString, "Executed Line: ");
 		val3 = calloc(1024, sizeof(char));
 		strcpy(val3, getLineAsString(val3, Parser));
 		strcat(currentLineString, val3);
