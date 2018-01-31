@@ -8,7 +8,7 @@ PicoC GUI is a further development for PicoC software (https://github.com/jpoiri
 PicoC GUI module allows the user to see what happens on the stack during the programms execution and run it line-by-line. 
 It was developed as a project for Hochschule Emden/Leer in Jan 2018 by a team of 4 students. 
 
-PicoC GUI will have no longer improvements and no major updates. 
+PicoC GUI will have no further improvements and no major updates. 
 
 
 
