@@ -1,3 +1,9 @@
+
+
+
+
+
+
 CC=gcc
 
 
@@ -11,6 +17,7 @@ CC=gcc
 CFLAGS= -Wall -g -std=gnu11 -pedantic -DUNIX_HOST -DVER=\"`git show-ref --abbrev=8 --head --hash head`\" -DTAG=\"`git describe --abbrev=0 --tags`\"
 LIBS=-lm -lreadline -lcsfml-graphics -lcsfml-window -lcsfml-system -lcsfml-audio
 
+LIBS1=-lm -lreadline 
 
 LIBSSFML=-lsfml-graphics -lsfml-window -lsfml-system -lcsfml-graphics -lcsfml-window -lcsfml-system -lcsfml-audio
 
@@ -20,6 +27,9 @@ SRCS_CPP = sfmltest.cpp
 OBJS_CPP = sfmltest.o
 
 TARGET	= picoc
+
+TARGET1 = picocNoSFML
+
 SRCS	= picoc.c table.c lex.c parse.c expression.c heap.c type.c \
 	variable.c clibrary.c platform.c include.c debug.c \
 	platform/platform_unix.c platform/library_unix.c \
@@ -29,12 +39,23 @@ SRCS	= picoc.c table.c lex.c parse.c expression.c heap.c type.c \
 	tools.c \
 	gui.c
 
+
 OBJS	:= $(SRCS:%.c=%.o)
+
+SRCS1 = $(filter-out gui.c, $(SRCS))
+
+OBJS1	:= $(SRCS1:%.c=%.o)
 
 all: $(TARGET)
 
+noSFML: $(TARGET1)
+
+
 $(TARGET): $(OBJS)  
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
+
+$(TARGET1): $(OBJS1)  
+	$(CC) $(CFLAGS) -o $(TARGET1) $(OBJS1) $(LIBS1)
 
 test:	all
 	@(cd tests; make -s test)
