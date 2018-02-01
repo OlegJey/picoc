@@ -39,8 +39,6 @@ extern struct StackFrame* get_TopStackFrame(struct ParseState *Parser); //done
 //if there is no ProviousStackFrame return will be NULL!!
 extern struct StackFrame* get_PreviousStackFrame(struct StackFrame *Frame); //done
 
-//dont use it!!
-extern struct ParseState* getOldParser(struct ParseState *Parser);
 
 //return int
 extern int getLine(struct ParseState *Parser); //done

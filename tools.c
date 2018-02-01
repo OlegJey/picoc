@@ -506,22 +506,7 @@ return to;
 }
 
 //not working yet
-struct ParseState* getOldParser(struct ParseState *Parser){
-		
-	struct ParseState *old;
 
-
-	if(Parser->pc->TopStackFrame){
-
-		if(&Parser->pc->TopStackFrame->ReturnParser != NULL){
-			old = &Parser->pc->TopStackFrame->ReturnParser;
-		}
-		
-	}
-	else old = NULL;
-	
-	return old;
-}
 
 
 
